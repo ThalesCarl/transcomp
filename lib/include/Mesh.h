@@ -31,6 +31,9 @@ public:
 	FrontierType getEndFrontierType();
 	void addPlainWall(int numberOfNodes, double wallLength, GridType gridType);
 
+
+
+
 private:
 	vector<double> positionOfNodes;
 	vector<double> positionSurfaceOfElements;
