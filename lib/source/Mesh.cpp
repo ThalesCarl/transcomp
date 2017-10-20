@@ -296,7 +296,7 @@ void Mesh::centerTypeGridAdder(int numOfNod, double wallLeng)
 	int initialNode = this -> numberOfNodes;
 	int finalNode = this -> numberOfNodes + numOfNod -1;
 	this -> positionOfNodes.resize(finalNode + 1);
-	this -> positionSurfaceOfElements.resize(finalNode + 1);
+	this -> positionSurfaceOfElements.resize(finalNode + 2);
 	
 	double sum = beginReference + 0.5 * delta;
 	for (int i = initialNode; i <= finalNode; i++)
@@ -325,7 +325,43 @@ void Mesh::centerTypeGridAdder(int numOfNod, double wallLeng)
 		cout << eastFrontier(i) << " ";
 	}
 }
-void Mesh::eastTypeGridAdder(int numberOfNodes, double wallLength)
+void Mesh::eastTypeGridAdder(int numOfNod, double wallLen)
 {
+	double delta = wallLen/(numOfNod - 0.5);
+	double beginReference = wallLength;
+
+	int initialNode = this -> numberOfNodes;
+	int finalNode = this -> numberOfNodes + numOfNod -1;
+	this -> positionOfNodes.resize(finalNode + 1);
+	this -> positionSurfaceOfElements.resize(finalNode + 2);
+
+	double sum = beginReference + 0.5*delta;
+	for (int i = initialNode; i <= finalNode; i++)
+	{
+		setPositionValue(i,sum);
+		sum += delta;
+	}
+	sum = beginReference + delta;;
+	for (int i = initialNode + 1; i <= finalNode; i++)
+	{
+		setSurfaceValue(i,sum);
+		sum += delta;
+	}
+	sum -= 0.5*delta;
+	setSurfaceValue(finalNode + 1,sum);
+	this -> numberOfNodes = finalNode + 1;
+	this -> wallLength = sum;
+
+	cout << "Positions: ";
+	for (int i = 0; i < getNumberOfNodes(); ++i)
+	{
+		cout << centerPoint(i) << " ";
+	}
+	cout << endl << "Surfaces: ";
+	cout << westFrontier(0) << " ";
+	for (int i = 0; i < getNumberOfNodes(); ++i)
+	{
+		cout << eastFrontier(i) << " ";
+	}
 
 }
