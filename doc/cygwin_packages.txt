@@ -1,0 +1,8 @@
+packages:
+gcc-core <- Devel
+gcc-g++ <- Devel
+make <- Devel
+cmake <- Devel
+wget <- Web
+gzip <- Base
+unzip <- Archive

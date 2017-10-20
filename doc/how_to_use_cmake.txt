@@ -1,0 +1,21 @@
+1. create a directory to put all files generated during the compilation.
+	I will call this folder "build".
+
+		mkdir build
+
+2. Move to inside this folder:
+
+		cd build
+
+3. Run the cmake to configure (generate compilation instructions):
+
+		cmake ..
+
+4. Compile your project:
+
+		make
+
+5. Your app will be located in folder "bin".
+	To execute it, run:
+
+		./bin/app.exe
