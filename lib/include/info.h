@@ -21,4 +21,21 @@ struct PlainWallInfo
 	InterfaceOperation interfaceOperation;
 };
 
+struct DoublePlainWallInfo
+{
+	int numberOfNodes1;
+	int numberOfNodes2;
+	double wallLength1;
+	double wallLength2;
+	GridType gridType1;
+	GridType gridType2;
+	double thermalConduction1;
+	double thermalConduction2;
+	BoundaryCondition beginBoundaryConditionType;
+	BoundaryCondition endBoundaryConditionType;
+	std::vector<double> beginBoundaryConditionInfo;
+	std::vector<double> endBoundaryConditionInfo;
+	InterfaceOperation interfaceOperation;
+};
+
 #endif

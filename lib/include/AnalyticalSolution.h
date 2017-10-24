@@ -14,6 +14,7 @@ class AnalyticalSolution
 {
 public:
 	AnalyticalSolution(PlainWallInfo data);
+	AnalyticalSolution(DoublePlainWallInfo data);
 
 	void writeSolutionToCsv(string directory, string fileName);
 	void printSolutionOnTheScreen();
@@ -24,7 +25,8 @@ private:
 
 	Mesh mesh;
 	Boundary boundaries;
-	double evalTemperatureLaw(double position);
+	double evalFirstProblemTemperatureLaw(double position);
+	double evalSecondProblemTemperatureLaw(double position, DoublePlainWallInfo data);
 	void addToTemperatureField(int controlVolumeIndex, double value);
 	
 };

@@ -35,15 +35,18 @@ void ControlVolume::writeSolutionToCsv(string directory, string fileName)
 	
 	string outputFileNameAndDirectory;
 	outputFileNameAndDirectory = directory + "/" + fileName + ".csv";
+	cout << "Finite Volume results saved in " << outputFileNameAndDirectory << endl;
 	
 	ofstream pFile;
-	pFile.open(outputFileNameAndDirectory);
+	pFile.open(outputFileNameAndDirectory,fstream::trunc);
 
 	pFile << "nodesPosition, " << "nodesTemperature" << endl;
+	pFile << fixed;
 	for (int i = 0; i < this -> mesh.getNumberOfNodes(); i++)
 	{
-		pFile << mesh.centerPoint(i) << ", " << this -> temperatureField[i] << endl;
+		pFile << mesh.centerPoint(i) << ", " << setprecision(20) << this -> temperatureField[i] << endl;
 	}
+	pFile.close();
 }
 
 void ControlVolume::printSolutionOnTheScreen()

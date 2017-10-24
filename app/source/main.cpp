@@ -4,7 +4,9 @@
 #include <info.h>
 #include <ControlVolume.h>
 #include <AnalyticalSolution.h>
+#include <algorithm>
 #include <petscksp.h>
+#include <cmath>
 using namespace std;
 
 
@@ -15,7 +17,7 @@ int main()
 	PetscInitialize(NULL,NULL,NULL,NULL);
 	PlainWallInfo firstExerciseInfo;
 
-	firstExerciseInfo.numberOfNodes=10;
+	firstExerciseInfo.numberOfNodes=4;
 	firstExerciseInfo.wallLength = 0.1;
 	firstExerciseInfo.gridType = CENTER;
 	firstExerciseInfo.thermalConduction = 50;
@@ -25,18 +27,31 @@ int main()
 	firstExerciseInfo.endBoundaryConditionInfo.push_back(20);
 	firstExerciseInfo.interfaceOperation = EQUIVALENT_RESISTANCE;
 
-	cout << "Mesh = CENTER, BC_begin = PRESCRIBED_TEMPERATURE(100), BC_end = PRESCRIBED_TEMPERATURE(20), n = 10 wl = 0.1" << endl;
-	ControlVolume firstExerciseControlVolumeWithCenterMesh(firstExerciseInfo);
-	AnalyticalSolution analyticalSolutionWithCenterMesh(firstExerciseInfo);	
-	analyticalSolutionWithCenterMesh.printSolutionOnTheScreen();
-	firstExerciseControlVolumeWithCenterMesh.printSolutionOnTheScreen();
+	ControlVolume firstExerciseVC(firstExerciseInfo);
+	AnalyticalSolution firstExerciseAN(firstExerciseInfo);
+	firstExerciseAN.writeSolutionToCsv("../results", "firstExerciseCenterMesh4NodesAN");
+	firstExerciseVC.writeSolutionToCsv("../results", "firstExerciseCenterMesh4NodesVC");
 
-	firstExerciseInfo.gridType = BOTH;
-	cout << endl << "Mesh = BOTH, BC_begin = PRESCRIBED_TEMPERATURE(100), BC_end = PRESCRIBED_TEMPERATURE(20), n = 10 wl = 0.1" << endl;
-	ControlVolume firstExerciseControlVolumeWithBothMesh(firstExerciseInfo);
-	AnalyticalSolution analyticalSolutionWithBothMesh(firstExerciseInfo);
-	analyticalSolutionWithBothMesh.printSolutionOnTheScreen();
-	firstExerciseControlVolumeWithBothMesh.printSolutionOnTheScreen();
+	
+	ofstream pFile;
+	pFile.open("../results/first_exercise_table_error.csv",fstream::app);
+	pFile << "numberOfNodes,maximum_error" << endl;
+	pFile << scientific;
+	for (int i = 2; i <= 10; ++i)
+	{
+		firstExerciseInfo.numberOfNodes=i;
+		ControlVolume auxiliarControlVolume(firstExerciseInfo);
+		AnalyticalSolution auxiliarAnalyticalSolution(firstExerciseInfo);
+		vector<double> errorsVec;
+		for (int j = 0; j < i; j++)
+		{
+			errorsVec.push_back(abs(auxiliarAnalyticalSolution[j] - auxiliarControlVolume.getTemperature(j)));
+		}
+		double maximumError = *max_element(errorsVec.begin(),errorsVec.end());
+		pFile << i << ", ";
+		pFile << setprecision(16) << maximumError << endl;
+	}
+
 
 	PetscFinalize();
 	return 0;

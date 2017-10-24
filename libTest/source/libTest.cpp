@@ -318,28 +318,48 @@ TestCase(AnalyticalSolution_ContVol_Test)
 	PetscFinalize();
 	for (int i = 0; i < 10; ++i)
 	{
-		checkEqual(analyticalSolution[i], firstExerciseControlVolume.getTemperature(i));
+		checkClose(analyticalSolution[i], firstExerciseControlVolume.getTemperature(i),1e-8);
 	}
 }
 
 TestCase(MeshAdderTest)
 {
-	Mesh mesh(3,1,WEST);
-	cout << "Generation: " << endl;
-	cout << "Positions: ";
-	for (int i = 0; i < mesh.getNumberOfNodes(); ++i)
-	{
-		cout << mesh.centerPoint(i) << " ";
-	}
-	cout << endl << "Surfaces: ";
-	cout << mesh.westFrontier(0) << " ";
-	for (int i = 0; i < mesh.getNumberOfNodes(); ++i)
-	{
-		cout << mesh.eastFrontier(i) << " ";
-	}
-	cout << endl << "Center Addition:" << endl;
+	Mesh mesh(3,1,WEST);	
 	mesh.addPlainWall(2,1,CENTER);
-
-	cout << endl << "East Addtion: " << endl;
 	mesh.addPlainWall(3,1,EAST);
+
+	vector<double> meshPositionsChecker;
+	meshPositionsChecker.push_back(0.00);
+	meshPositionsChecker.push_back(0.40);
+	meshPositionsChecker.push_back(0.80);
+	meshPositionsChecker.push_back(1.25);
+	meshPositionsChecker.push_back(1.75);
+	meshPositionsChecker.push_back(2.20);
+	meshPositionsChecker.push_back(2.60);
+	meshPositionsChecker.push_back(3.00);
+
+	vector<double> meshSurfaceChecker;
+	meshSurfaceChecker.push_back(0.0);
+	meshSurfaceChecker.push_back(0.2);
+	meshSurfaceChecker.push_back(0.6);
+	meshSurfaceChecker.push_back(1.0);
+	meshSurfaceChecker.push_back(1.5);
+	meshSurfaceChecker.push_back(2.0);
+	meshSurfaceChecker.push_back(2.4);
+	meshSurfaceChecker.push_back(2.8);
+	meshSurfaceChecker.push_back(3.0);
+
+	for (int i = 0; i < meshPositionsChecker.size(); ++i)
+	{
+		checkClose(meshPositionsChecker[i], mesh.centerPoint(i), 1e-8);
+	}
+
+	for (int i = 0; i < meshSurfaceChecker.size() - 1 ; ++i)
+	{
+		checkClose(meshSurfaceChecker[i], mesh.westFrontier(i), 1e-8);
+	}
+	int lastFrontierIndex = meshSurfaceChecker.size() - 1;
+	checkClose(meshSurfaceChecker[lastFrontierIndex], mesh.eastFrontier(lastFrontierIndex - 1),1e-8);
+
+
 }

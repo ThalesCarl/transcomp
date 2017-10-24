@@ -40,8 +40,6 @@ private:
 	
 	int numberOfNodes;
 	double wallLength;
-	GridType gridType;
-	
 	
 	void centerTypeGridGenerator();
 	void westTypeGridGenerator();

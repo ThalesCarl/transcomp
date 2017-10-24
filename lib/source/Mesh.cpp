@@ -1,9 +1,8 @@
 #include "Mesh.h"
 
 Mesh::Mesh(int numberOfNod, double wallLen, GridType gridT):
-	numberOfNodes(numberOfNod),
-	wallLength(wallLen),
-	gridType(gridT)
+	numberOfNodes((numberOfNod >= 1)? numberOfNod: -30), 
+	wallLength(wallLen)
 {
 	this -> positionOfNodes.resize(numberOfNodes);
 	this -> positionSurfaceOfElements.resize(numberOfNodes + 1);
@@ -313,17 +312,7 @@ void Mesh::centerTypeGridAdder(int numOfNod, double wallLeng)
 	this -> numberOfNodes = finalNode + 1;
 	this -> wallLength = sum - delta;
 
-	cout << "Positions: ";
-	for (int i = 0; i < getNumberOfNodes(); ++i)
-	{
-		cout << centerPoint(i) << " ";
-	}
-	cout << endl << "Surfaces: ";
-	cout << westFrontier(0) << " ";
-	for (int i = 0; i < getNumberOfNodes(); ++i)
-	{
-		cout << eastFrontier(i) << " ";
-	}
+	
 }
 void Mesh::eastTypeGridAdder(int numOfNod, double wallLen)
 {
@@ -351,17 +340,4 @@ void Mesh::eastTypeGridAdder(int numOfNod, double wallLen)
 	setSurfaceValue(finalNode + 1,sum);
 	this -> numberOfNodes = finalNode + 1;
 	this -> wallLength = sum;
-
-	cout << "Positions: ";
-	for (int i = 0; i < getNumberOfNodes(); ++i)
-	{
-		cout << centerPoint(i) << " ";
-	}
-	cout << endl << "Surfaces: ";
-	cout << westFrontier(0) << " ";
-	for (int i = 0; i < getNumberOfNodes(); ++i)
-	{
-		cout << eastFrontier(i) << " ";
-	}
-
 }
