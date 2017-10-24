@@ -1,2 +1,0 @@
-/usr/bin/ar qc ../static_libs/Debug/liblib.a  CMakeFiles/lib.dir/source/AnalyticalSolution.cpp.o CMakeFiles/lib.dir/source/Boundary.cpp.o CMakeFiles/lib.dir/source/ControlVolume.cpp.o CMakeFiles/lib.dir/source/LinearSystem.cpp.o CMakeFiles/lib.dir/source/Mesh.cpp.o CMakeFiles/lib.dir/source/ThermalConduction.cpp.o
-/usr/bin/ranlib ../static_libs/Debug/liblib.a
