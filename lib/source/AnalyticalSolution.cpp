@@ -2,6 +2,7 @@
 
 AnalyticalSolution::AnalyticalSolution(PlainWallInfo data): 
 	mesh(data.numberOfNodes, data.wallLength, data.gridType),
+	vecotorK(data.numberOfNodes,data.thermalConduction),
 	boundaries(data.beginBoundaryConditionType, data.endBoundaryConditionType, data.beginBoundaryConditionInfo, data.endBoundaryConditionInfo)		
 {
 	this -> temperatureField.resize(this -> mesh.getNumberOfNodes());
@@ -15,18 +16,26 @@ AnalyticalSolution::AnalyticalSolution(PlainWallInfo data):
 
 AnalyticalSolution::AnalyticalSolution(DoublePlainWallInfo data): 
 	mesh(data.numberOfNodes1, data.wallLength1, data.gridType1),
+	vecotorK(data.numberOfNodes1,data.thermalConduction1,data.numberOfNodes2,data.thermalConduction2),
 	boundaries(data.beginBoundaryConditionType, data.endBoundaryConditionType, data.beginBoundaryConditionInfo, data.endBoundaryConditionInfo)		
 {
-	this -> mesh.addPlainWall(data.numberOfNodes2, data.wallLength2, data.gridType2);
-	this -> temperatureField.resize(this -> mesh.getNumberOfNodes());
 	double temporaryTemperatureValue;
+	
 	for (int node = 0; node < mesh.getNumberOfNodes(); node++)
 	{
-		temporaryTemperatureValue = evalSecondProblemTemperatureLaw(mesh.centerPoint(node),data);
+		temporaryTemperatureValue = evalSecondProblemTemperatureLawSecondMaterial(mesh.centerPoint(node));
+		addToTemperatureField(node,temporaryTemperatureValue);
+	}
+
+	this -> mesh.addPlainWall(data.numberOfNodes2, data.wallLength2, data.gridType2);
+	this -> temperatureField.resize(this -> mesh.getNumberOfNodes());
+
+	for (int node = 0; node < mesh.getNumberOfNodes(); node++)
+	{
+		temporaryTemperatureValue = evalSecondProblemTemperatureLawFirstMaterial(mesh.centerPoint(node));
 		addToTemperatureField(node,temporaryTemperatureValue);
 	}
 }
-
 
 
 void AnalyticalSolution::writeSolutionToCsv(string directory, string fileName)
@@ -75,7 +84,16 @@ double AnalyticalSolution::evalFirstProblemTemperatureLaw(double position)
 	return beginPrescTemp + (endPrescTemp - beginPrescTemp)*(position/wallLength);
 }
 
-double AnalyticalSolution::evalSecondProblemTemperatureLaw(double position, DoublePlainWallInfo data)
+double AnalyticalSolution::evalSecondProblemTemperatureLawFirstMaterial(double position)
+{
+	double Tinf = bondaries.getEndBoundaryCondition();
+	double q = bondaries.getBeginBoundaryCondition();
+	double LA = mesh.getWallLength();
+	double LA
+
+}
+
+double AnalyticalSolution::evalSecondProblemTemperatureLawSecondMaterial(double position)
 {
 
 }

@@ -25,8 +25,11 @@ private:
 
 	Mesh mesh;
 	Boundary boundaries;
+	ThermalConduction vectorK;
 	double evalFirstProblemTemperatureLaw(double position);
-	double evalSecondProblemTemperatureLaw(double position, DoublePlainWallInfo data);
+	double evalSecondProblemTemperatureLawFirstMaterial(double position);
+	double evalSecondProblemTemperatureLawSecondMaterial(double position);
+
 	void addToTemperatureField(int controlVolumeIndex, double value);
 	
 };

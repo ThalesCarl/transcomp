@@ -11,6 +11,7 @@ class ThermalConduction
 public:
 	//Construtor
 	ThermalConduction(int numberOfNodes, double k);
+	ThermalConduction(int numberOfNodes1,double k1, int numberOfNodes2, double k2);
 	ThermalConduction(vector<double> inputThermalConductions);
 		
 	
