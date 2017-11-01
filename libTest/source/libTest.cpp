@@ -360,6 +360,39 @@ TestCase(MeshAdderTest)
 	}
 	int lastFrontierIndex = meshSurfaceChecker.size() - 1;
 	checkClose(meshSurfaceChecker[lastFrontierIndex], mesh.eastFrontier(lastFrontierIndex - 1),1e-8);
+}
 
+TestCase(DoubleWallAnalyticalSolutionTest)
+{
+	DoublePlainWallInfo info;
+	info.numberOfNodes1 = 5;
+	info.numberOfNodes2 = 3;
+	info.wallLength1 = 3.0;
+	info.wallLength2 = 1.5;
+	info.gridType1 = WEST;
+	info.gridType2 = CENTER;
+	info.thermalConduction1 = 80.0;
+	info.thermalConduction2 = 20.0;
+	info.beginBoundaryConditionType = PRESCRIBED_FLUX;
+	info.endBoundaryConditionType = CONVECTION;
+	info.beginBoundaryConditionInfo.push_back(300.0);
+	info.endBoundaryConditionInfo.push_back(25.0);
+	info.endBoundaryConditionInfo.push_back(298.0);
+	info.interfaceOperation = EQUIVALENT_RESISTANCE;
 
+	AnalyticalSolution doubleWallAN(info);
+	vector<double> exactTemperatureField;
+	exactTemperatureField.push_back(343.75);
+	exactTemperatureField.push_back(341.25);
+	exactTemperatureField.push_back(338.75);
+	exactTemperatureField.push_back(336.25);
+	exactTemperatureField.push_back(333.75);
+	exactTemperatureField.push_back(328.75);
+	exactTemperatureField.push_back(321.25);
+	exactTemperatureField.push_back(313.75);
+	
+	for (int i = 0; i < (info.numberOfNodes1+info.numberOfNodes2); ++i)
+	{
+		checkClose(exactTemperatureField[i],doubleWallAN[i],1e-8);
+	}
 }

@@ -8,6 +8,7 @@
 #include <Boundary.h>
 #include <fstream>
 #include <iomanip>
+#include <ThermalConduction.h>
 using namespace std;
 
 class AnalyticalSolution
@@ -27,8 +28,8 @@ private:
 	Boundary boundaries;
 	ThermalConduction vectorK;
 	double evalFirstProblemTemperatureLaw(double position);
-	double evalSecondProblemTemperatureLawFirstMaterial(double position);
-	double evalSecondProblemTemperatureLawSecondMaterial(double position);
+	double evalSecondProblemTemperatureLaw(double position, DoublePlainWallInfo data);
+	
 
 	void addToTemperatureField(int controlVolumeIndex, double value);
 	

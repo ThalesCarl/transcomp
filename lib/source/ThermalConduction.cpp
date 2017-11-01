@@ -18,10 +18,10 @@ ThermalConduction::ThermalConduction(vector<double> inputThermalConductions)
 	}
 }
 
-ThermalConduction(int numberOfNodes1,double k1, int numberOfNodes2, double k2);
+ThermalConduction::ThermalConduction(int numberOfNodes1,double k1, int numberOfNodes2, double k2)
 {
 	this -> nodeThermalConductions.resize(numberOfNodes1+numberOfNodes2);
-	for(int i = 0; i < numberOfNodes1, i++)
+	for(int i = 0; i < numberOfNodes1; i++)
 	{
 		setNodeThermalConduction(i,k1);
 	}

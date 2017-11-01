@@ -2,7 +2,7 @@
 
 AnalyticalSolution::AnalyticalSolution(PlainWallInfo data): 
 	mesh(data.numberOfNodes, data.wallLength, data.gridType),
-	vecotorK(data.numberOfNodes,data.thermalConduction),
+	vectorK(data.numberOfNodes,data.thermalConduction),
 	boundaries(data.beginBoundaryConditionType, data.endBoundaryConditionType, data.beginBoundaryConditionInfo, data.endBoundaryConditionInfo)		
 {
 	this -> temperatureField.resize(this -> mesh.getNumberOfNodes());
@@ -16,23 +16,23 @@ AnalyticalSolution::AnalyticalSolution(PlainWallInfo data):
 
 AnalyticalSolution::AnalyticalSolution(DoublePlainWallInfo data): 
 	mesh(data.numberOfNodes1, data.wallLength1, data.gridType1),
-	vecotorK(data.numberOfNodes1,data.thermalConduction1,data.numberOfNodes2,data.thermalConduction2),
+	vectorK(data.numberOfNodes1,data.thermalConduction1,data.numberOfNodes2,data.thermalConduction2),
 	boundaries(data.beginBoundaryConditionType, data.endBoundaryConditionType, data.beginBoundaryConditionInfo, data.endBoundaryConditionInfo)		
 {
-	double temporaryTemperatureValue;
-	
-	for (int node = 0; node < mesh.getNumberOfNodes(); node++)
+	double temporaryTemperatureValue;	
+	this -> temperatureField.resize(mesh.getNumberOfNodes());
+	int numberOfNodes1 = mesh.getNumberOfNodes();
+	for (int node = 0; node < numberOfNodes1; node++)
 	{
-		temporaryTemperatureValue = evalSecondProblemTemperatureLawSecondMaterial(mesh.centerPoint(node));
+		temporaryTemperatureValue = evalSecondProblemTemperatureLaw(mesh.centerPoint(node),data);
 		addToTemperatureField(node,temporaryTemperatureValue);
 	}
-
 	this -> mesh.addPlainWall(data.numberOfNodes2, data.wallLength2, data.gridType2);
 	this -> temperatureField.resize(this -> mesh.getNumberOfNodes());
 
-	for (int node = 0; node < mesh.getNumberOfNodes(); node++)
+	for (int node = numberOfNodes1; node < mesh.getNumberOfNodes(); node++)
 	{
-		temporaryTemperatureValue = evalSecondProblemTemperatureLawFirstMaterial(mesh.centerPoint(node));
+		temporaryTemperatureValue = evalSecondProblemTemperatureLaw(mesh.centerPoint(node),data);
 		addToTemperatureField(node,temporaryTemperatureValue);
 	}
 }
@@ -84,16 +84,31 @@ double AnalyticalSolution::evalFirstProblemTemperatureLaw(double position)
 	return beginPrescTemp + (endPrescTemp - beginPrescTemp)*(position/wallLength);
 }
 
-double AnalyticalSolution::evalSecondProblemTemperatureLawFirstMaterial(double position)
+double AnalyticalSolution::evalSecondProblemTemperatureLaw(double position, DoublePlainWallInfo data)
 {
-	double Tinf = bondaries.getEndBoundaryCondition();
-	double q = bondaries.getBeginBoundaryCondition();
-	double LA = mesh.getWallLength();
-	double LA
-
-}
-
-double AnalyticalSolution::evalSecondProblemTemperatureLawSecondMaterial(double position)
-{
-
+	double Tinf = boundaries.getEndBoundaryCondition();
+	double q = boundaries.getBeginBoundaryCondition();
+	double h = boundaries.getEndConvectionCoeficient();
+	double LA = data.wallLength1;
+	double LB = data.wallLength2;
+	double KA = data.thermalConduction1;
+	double KB = data.thermalConduction2;
+	double R = (LA/KA)+(LB/KB)+(1/h);
+	double T0 = Tinf + q * R;
+	if(position <= LA)
+		return T0 - (q/KA)*position;
+	else if ((position > LA) && (position <= LA + LB))
+	{
+		double TLA = T0 - (q/KA)*LA;
+		R = (LA/KA) + (LB/KB);
+		double TL = T0 - q * R;
+		double d1 = -(h/KB) * (TL - Tinf);
+		double d2 = TLA + (h/KB)*(TL - Tinf)*LA;
+		return d2 + d1 * position;
+	}
+	else
+	{
+		cout << "Invalid position _ AN" << endl;
+		return -100;
+	}
 }
