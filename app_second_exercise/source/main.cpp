@@ -1,5 +1,6 @@
 #include <iostream>
 #include <string>
+#include <iomanip>
 #include <vector>
 #include <info.h>
 #include <ControlVolume.h>
@@ -17,72 +18,80 @@ int main()
 		Tarefa sem respeitar divisão de materiais
 	----------------------------------------------*/
 	{
-		DoublePlainWallInfo info;
+		DoublePlainWallInfo infoWithout;
 
-		info.numberOfNodes1 = 5;
-		info.numberOfNodes2 = 3;
-		info.wallLength1 = 3.0;
-		info.wallLength2 = 1.5;
-		info.gridType1 = WEST;
-		info.gridType2 = CENTER;
-		info.thermalConduction1 = 80.0;
-		info.thermalConduction2 = 20.0;
-		info.beginBoundaryConditionType = PRESCRIBED_FLUX;
-		info.endBoundaryConditionType = CONVECTION;
-		info.beginBoundaryConditionInfo.push_back(300.0);
-		info.endBoundaryConditionInfo.push_back(25.0);
-		info.endBoundaryConditionInfo.push_back(298.0);
-		info.interfaceOperation = EQUIVALENT_RESISTANCE;
+		infoWithout.numberOfNodes1 = 4;
+		infoWithout.numberOfNodes2 = 3;
+		infoWithout.wallLength1 = 3.0;
+		infoWithout.wallLength2 = 1.5;
+		infoWithout.gridType1 = WEST;
+		infoWithout.gridType2 = CENTER;
+		infoWithout.thermalConduction1 = 80.0;
+		infoWithout.thermalConduction2 = 20.0;
+		infoWithout.beginBoundaryConditionType = PRESCRIBED_FLUX;
+		infoWithout.endBoundaryConditionType = CONVECTION;
+		infoWithout.beginBoundaryConditionInfo.push_back(300.0);
+		infoWithout.endBoundaryConditionInfo.push_back(25.0);
+		infoWithout.endBoundaryConditionInfo.push_back(298.0);
+		
+		infoWithout.interfaceOperation = EQUIVALENT_RESISTANCE;
+		ControlVolume contVolEquivResistA(infoWithout);
+		contVolEquivResistA.writeSolutionToCsv("../results", "secondExerciseDivisionNotRespectedEquivalentResistanceVC");
 
-		ControlVolume contVolEquivResist(info);
-		contVolEquivResist.writeSolutionToCsv("../results", "secondExerciseDivisionNotRespectedEquivalentResistanceVC");
+		infoWithout.interfaceOperation = LINEAR_INTERPOLATION;
+		ControlVolume  contVolLinInterpA(infoWithout);
+		contVolLinInterpA.writeSolutionToCsv("../results", "secondExerciseDivisionNotRespectedLinearInterpolationVC");
 
-		info.interfaceOperation = LINEAR_INTERPOLATION;
-		ControlVolume  contVolLinInterp(info);
-		contVolLinInterp.writeSolutionToCsv("../results", "secondExerciseDivisionNotRespectedLinearInterpolationVC");
+		infoWithout.wallLength1 = 2.9;
+		infoWithout.wallLength2 = 1.6;
+		AnalyticalSolution analytSolA(infoWithout);
+		analytSolA.writeSolutionToCsv("../results", "secondExerciseDivisionNotRespectedAN");
+		cout << scientific;
+		for (int i = 0; i < infoWithout.numberOfNodes1 + infoWithout.numberOfNodes2; i++)
+		{
+			double equivalentResistanceError = abs(contVolEquivResistA.getTemperature(i) - analytSolA[i]);
+			double linearInterpolationError =  abs(contVolLinInterpA.getTemperature(i) - analytSolA[i]);
+			cout << contVolEquivResistA.getPosition(i) << ", " << equivalentResistanceError << ", " << linearInterpolationError << endl;
+		}
 
-		info.wallLength1 = 2.9;
-		info.wallLength2 = 1.6;
-		AnalyticalSolution analytSol(info);
-		analytSol.writeSolutionToCsv("../results", "secondExerciseDivisionNotRespectedAN");
 	}
 	/*---------------------------------------------
 		Tarefa com o erro em cada posição
 	----------------------------------------------*/
 	{
-		DoublePlainWallInfo info;
+		DoublePlainWallInfo infoEveryPosition;
 
-		info.numberOfNodes1 = 5;
-		info.numberOfNodes2 = 3;
-		info.wallLength1 = 3.0;
-		info.wallLength2 = 1.5;
-		info.gridType1 = WEST;
-		info.gridType2 = CENTER;
-		info.thermalConduction1 = 80.0;
-		info.thermalConduction2 = 20.0;
-		info.beginBoundaryConditionType = PRESCRIBED_FLUX;
-		info.endBoundaryConditionType = CONVECTION;
-		info.beginBoundaryConditionInfo.push_back(300.0);
-		info.endBoundaryConditionInfo.push_back(25.0);
-		info.endBoundaryConditionInfo.push_back(298.0);
+		infoEveryPosition.numberOfNodes1 = 4;
+		infoEveryPosition.numberOfNodes2 = 3;
+		infoEveryPosition.wallLength1 = 3.0;
+		infoEveryPosition.wallLength2 = 1.5;
+		infoEveryPosition.gridType1 = WEST;
+		infoEveryPosition.gridType2 = CENTER;
+		infoEveryPosition.thermalConduction1 = 80.0;
+		infoEveryPosition.thermalConduction2 = 20.0;
+		infoEveryPosition.beginBoundaryConditionType = PRESCRIBED_FLUX;
+		infoEveryPosition.endBoundaryConditionType = CONVECTION;
+		infoEveryPosition.beginBoundaryConditionInfo.push_back(300.0);
+		infoEveryPosition.endBoundaryConditionInfo.push_back(25.0);
+		infoEveryPosition.endBoundaryConditionInfo.push_back(298.0);
 		
-		info.interfaceOperation = EQUIVALENT_RESISTANCE;
-		ControlVolume contVolEquivResist(info);
+		infoEveryPosition.interfaceOperation = EQUIVALENT_RESISTANCE;
+		ControlVolume contVolEquivResistB(infoEveryPosition);
 
-		info.interfaceOperation = LINEAR_INTERPOLATION;
-		ControlVolume  contVolLinInterp(info);
+		infoEveryPosition.interfaceOperation = LINEAR_INTERPOLATION;
+		ControlVolume  contVolLinInterpB(infoEveryPosition);
 		
-		AnalyticalSolution analytSol(info);	
+		AnalyticalSolution analytSolB(infoEveryPosition);	
 		
 		ofstream pFile;
 		pFile.open("../results/second_exercise_error_in_every_position.csv",fstream::trunc);
 		pFile << "position, error_equivalent_resistance, error_linear_interpolation" << endl;
 		pFile << scientific;
-		for (int i = 0; i < info.numberOfNodes1 + info.numberOfNodes2; ++i)
+		for (int i = 0; i < infoEveryPosition.numberOfNodes1 + infoEveryPosition.numberOfNodes2; i++)
 		{
-			double equivalentResistanceError = abs(contVolEquivResist.getTemperature(i) - analytSol[i]);
-			double linearInterpolationError =  abs(contVolLinInterp.getTemperature(i) - analytSol[i]);
-			pFile << contVolEquivResist.getPosition(i) << ", " << equivalentResistanceError << ", " << linearInterpolationError << endl;
+			double equivalentResistanceError = abs(contVolEquivResistB.getTemperature(i) - analytSolB[i]);
+			double linearInterpolationError =  abs(contVolLinInterpB.getTemperature(i) - analytSolB[i]);
+			pFile << contVolEquivResistB.getPosition(i) << ", " << equivalentResistanceError << ", " << linearInterpolationError << endl;
 		}
 		pFile.close();
 		cout << "Error for positions values saved in ../results/second_exercise_error_in_every_position.csv" << endl;
@@ -92,19 +101,19 @@ int main()
 		Tarefa com o erro maximo em função do numero de volumes de controle
 	----------------------------------------------*/
 	{
-		DoublePlainWallInfo info;
+		DoublePlainWallInfo infoMaximum;
 
-		info.wallLength1 = 3.0;
-		info.wallLength2 = 1.5;
-		info.gridType1 = WEST;
-		info.gridType2 = CENTER;
-		info.thermalConduction1 = 80.0;
-		info.thermalConduction2 = 20.0;
-		info.beginBoundaryConditionType = PRESCRIBED_FLUX;
-		info.endBoundaryConditionType = CONVECTION;
-		info.beginBoundaryConditionInfo.push_back(300.0);
-		info.endBoundaryConditionInfo.push_back(25.0);
-		info.endBoundaryConditionInfo.push_back(298.0);
+		infoMaximum.wallLength1 = 3.0;
+		infoMaximum.wallLength2 = 1.5;
+		infoMaximum.gridType1 = WEST;
+		infoMaximum.gridType2 = CENTER;
+		infoMaximum.thermalConduction1 = 80.0;
+		infoMaximum.thermalConduction2 = 20.0;
+		infoMaximum.beginBoundaryConditionType = PRESCRIBED_FLUX;
+		infoMaximum.endBoundaryConditionType = CONVECTION;
+		infoMaximum.beginBoundaryConditionInfo.push_back(300.0);
+		infoMaximum.endBoundaryConditionInfo.push_back(25.0);
+		infoMaximum.endBoundaryConditionInfo.push_back(298.0);
 		
 		ofstream toFile;
 		toFile.open("../results/second_exercise_maximum_error.csv",fstream::trunc);
@@ -112,31 +121,31 @@ int main()
 		toFile << scientific;
 		for (int i = 3; i < 10; ++i)
 		{
-			info.numberOfNodes1 = i;
+			infoMaximum.numberOfNodes1 = i;
 			for (int j = 3; j < 10; j++)
 			{
 				toFile << i << ", "  << j << ", ";
-				info.numberOfNodes2 = j;
+				infoMaximum.numberOfNodes2 = j;
 				vector<double> errorsVec;
 
 				
 
-				info.interfaceOperation = EQUIVALENT_RESISTANCE;
-				ControlVolume contVolEquivResist(info);
-				AnalyticalSolution analytSol(info);
+				infoMaximum.interfaceOperation = EQUIVALENT_RESISTANCE;
+				ControlVolume contVolEquivResistC(infoMaximum);
+				AnalyticalSolution analytSolC(infoMaximum);
 				for(int k = 0; k < i + j; k++)
 				{
-					errorsVec.push_back(abs(contVolEquivResist.getTemperature(k) - analytSol[k]));
+					errorsVec.push_back(abs(contVolEquivResistC.getTemperature(k) - analytSolC[k]));
 				}
 				double maximumError = *max_element(errorsVec.begin(),errorsVec.end());
 				toFile << maximumError << ", ";
 
 				errorsVec.clear();
-				info.interfaceOperation = LINEAR_INTERPOLATION;
-				ControlVolume  contVolLinInterp(info);
-				for(int k = 0; k < info.numberOfNodes1 + info.numberOfNodes2; k++)
+				infoMaximum.interfaceOperation = LINEAR_INTERPOLATION;
+				ControlVolume  contVolLinInterpC(infoMaximum);
+				for(int k = 0; k < infoMaximum.numberOfNodes1 + infoMaximum.numberOfNodes2; k++)
 				{
-					errorsVec.push_back(abs(contVolLinInterp.getTemperature(k) - analytSol[k]));
+					errorsVec.push_back(abs(contVolLinInterpC.getTemperature(k) - analytSolC[k]));
 				}
 				maximumError = *max_element(errorsVec.begin(),errorsVec.end());
 				toFile << maximumError << ", " << endl;
@@ -146,8 +155,7 @@ int main()
 		cout << "maximum Error valeus saved in ../results/second_exercise_maximum_error.csv" << endl;
 	}
 
-
-
+	
 	PetscFinalize();
 	return 0;
 }

@@ -16,10 +16,12 @@ class ControlVolume
 public:
 
 	ControlVolume(PlainWallInfo data);
+	ControlVolume(DoublePlainWallInfo data);
 
 	//get functions
 	void writeSolutionToCsv(string directory, string fileName);
 	void printSolutionOnTheScreen();
+	double getPosition(int ControlVolumeIndex);
 	double getTemperature(int ControlVolumeIndex);
 
 private:		

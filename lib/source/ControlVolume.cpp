@@ -27,7 +27,37 @@ ControlVolume::ControlVolume(PlainWallInfo data):
 	{
 		this -> temperatureField[i] = this -> solver[i];
 	}
-	
+}
+
+ControlVolume::ControlVolume(DoublePlainWallInfo data):	
+		mesh(data.numberOfNodes1, data.wallLength1, data.gridType1),
+		vectorK(data.numberOfNodes1, data.thermalConduction1, data.numberOfNodes2,data.thermalConduction2),
+		boundaries(data.beginBoundaryConditionType, data.endBoundaryConditionType, data.beginBoundaryConditionInfo, data.endBoundaryConditionInfo), 
+		solver(data.numberOfNodes1 + data.numberOfNodes2),
+		interfaceOperation(data.interfaceOperation)
+{
+	mesh.addPlainWall(data.numberOfNodes2,data.wallLength2,data.gridType2);
+
+	int n = this -> mesh.getNumberOfNodes();
+	beginProcessor();
+	for (int i = 1; i < n - 1; i++)
+	{
+		double aw , ae, ap;
+		aw = vectorK.getWestInterface(mesh,i, this -> interfaceOperation)/this -> mesh.westDistance(i);
+		ae = vectorK.getEastInterface(mesh,i,this -> interfaceOperation)/this -> mesh.eastDistance(i);
+		ap = (aw + ae);
+		solver.setValueToMatrix(i,i-1,(-1)*aw);
+		solver.setValueToMatrix(i,i+1,(-1)*ae);
+		solver.setValueToMatrix(i,i,ap);	
+	}
+	endProcessor();
+	this -> solver.solve();
+
+	this -> temperatureField.resize(n);
+	for (int i = 0; i < n; i++)
+	{
+		this -> temperatureField[i] = this -> solver[i];
+	}
 }
 
 void ControlVolume::writeSolutionToCsv(string directory, string fileName)
@@ -167,6 +197,11 @@ void ControlVolume::endProcessor()
 double ControlVolume::getTemperature(int ControlVolumeIndex)
 {
 	return this -> temperatureField[ControlVolumeIndex];
+}
+
+double ControlVolume::getPosition(int ControlVolumeIndex)
+{
+	return this -> mesh.centerPoint(ControlVolumeIndex);
 }
 
 
