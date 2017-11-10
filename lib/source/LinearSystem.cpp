@@ -5,6 +5,7 @@ LinearSystem::LinearSystem(int numberOfNodes): matrixOrder(numberOfNodes)
 	allocSolutionVector(numberOfNodes);
 	allocIndependentValuesVector(numberOfNodes);
 	allocMatrixOfCoeficients(numberOfNodes);
+    
 }
 
 double LinearSystem::operator[](const int index)
@@ -26,7 +27,18 @@ void LinearSystem::setValueToVector(int index, double value)
 
 void LinearSystem::solve()
 {
-	KSP            ksp;          /* linear solver context */
+	int numberOfNodes = this -> matrixOrder;
+    cout << "Inicio matrix \n";
+    for (int i = 0; i < numberOfNodes; i++)
+    {
+        for(int j = 0; j < numberOfNodes; j++)
+        {
+            cout << this -> matrixOfCoeficients[i][j] << ", ";
+        }
+        cout << endl;
+    }
+
+    KSP            ksp;          /* linear solver context */
     Vec            x,b;          /* solution, residual vectors */
     Mat            A;            
     PetscInt n = this -> matrixOrder;
@@ -90,6 +102,7 @@ void LinearSystem::solve()
         VecGetValues(x,1,&i,&value);
         this -> solution[i] = value;
     }
+    
     // VecView(x,PETSC_VIEWER_STDOUT_WORLD);
     // /*---------------------------------------------
     //     DESTRUIÇÃO DOS OBJETOS DA PETSC CRIADOS
@@ -97,6 +110,7 @@ void LinearSystem::solve()
     VecDestroy(&x);
     VecDestroy(&b);
     MatDestroy(&A);
+    KSPDestroy(&ksp);
 }
 
 void LinearSystem::allocIndependentValuesVector(int vectorSize)

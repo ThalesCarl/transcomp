@@ -303,7 +303,7 @@ TestCase(AnalyticalSolution_ContVol_Test)
 
 	firstExerciseInfo.numberOfNodes = 10;
 	firstExerciseInfo.wallLength = 13;
-	firstExerciseInfo.gridType = CENTER;
+	firstExerciseInfo.gridType = BOTH;
 	firstExerciseInfo.thermalConduction = 13;
 	firstExerciseInfo.beginBoundaryConditionType = PRESCRIBED_TEMPERATURE;
 	firstExerciseInfo.endBoundaryConditionType = PRESCRIBED_TEMPERATURE;

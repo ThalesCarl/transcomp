@@ -20,6 +20,7 @@ ControlVolume::ControlVolume(PlainWallInfo data):
 		solver.setValueToMatrix(i,i,ap);	
 	}
 	endProcessor();
+	
 	this -> solver.solve();
 
 	this -> temperatureField.resize(n);

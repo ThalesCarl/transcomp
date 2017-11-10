@@ -97,7 +97,7 @@ double AnalyticalSolution::evalSecondProblemTemperatureLaw(double position, Doub
 	double T0 = Tinf + q * R;
 	if(position <= LA)
 		return T0 - (q/KA)*position;
-	else if ((position > LA) && (position <= LA + LB))
+	else if ((position > LA) && (position <= LA + (1.01)*LB))
 	{
 		double TLA = T0 - (q/KA)*LA;
 		R = (LA/KA) + (LB/KB);

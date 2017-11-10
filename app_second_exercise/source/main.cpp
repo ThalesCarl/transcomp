@@ -20,7 +20,7 @@ int main()
 	{
 		DoublePlainWallInfo infoWithout;
 
-		infoWithout.numberOfNodes1 = 4;
+		infoWithout.numberOfNodes1 = 5;
 		infoWithout.numberOfNodes2 = 3;
 		infoWithout.wallLength1 = 3.0;
 		infoWithout.wallLength2 = 1.5;
@@ -46,13 +46,7 @@ int main()
 		infoWithout.wallLength2 = 1.6;
 		AnalyticalSolution analytSolA(infoWithout);
 		analytSolA.writeSolutionToCsv("../results", "secondExerciseDivisionNotRespectedAN");
-		cout << scientific;
-		for (int i = 0; i < infoWithout.numberOfNodes1 + infoWithout.numberOfNodes2; i++)
-		{
-			double equivalentResistanceError = abs(contVolEquivResistA.getTemperature(i) - analytSolA[i]);
-			double linearInterpolationError =  abs(contVolLinInterpA.getTemperature(i) - analytSolA[i]);
-			cout << contVolEquivResistA.getPosition(i) << ", " << equivalentResistanceError << ", " << linearInterpolationError << endl;
-		}
+		
 
 	}
 	/*---------------------------------------------
@@ -66,7 +60,7 @@ int main()
 		infoEveryPosition.wallLength1 = 3.0;
 		infoEveryPosition.wallLength2 = 1.5;
 		infoEveryPosition.gridType1 = WEST;
-		infoEveryPosition.gridType2 = CENTER;
+		infoEveryPosition.gridType2 = EAST;
 		infoEveryPosition.thermalConduction1 = 80.0;
 		infoEveryPosition.thermalConduction2 = 20.0;
 		infoEveryPosition.beginBoundaryConditionType = PRESCRIBED_FLUX;
@@ -154,6 +148,7 @@ int main()
 		toFile.close();
 		cout << "maximum Error valeus saved in ../results/second_exercise_maximum_error.csv" << endl;
 	}
+
 
 	
 	PetscFinalize();
