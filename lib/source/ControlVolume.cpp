@@ -152,6 +152,7 @@ void ControlVolume::endProcessor()
 	if ((endFrontierType == CONNECTED) && (endBoundaryConditionType == PRESCRIBED_TEMPERATURE))
 	{
 		solver.setValueToMatrix(n-1,n-1,1);
+		double seila = this -> boundaries.getEndBoundaryCondition();
 		solver.setValueToVector(n-1, this -> boundaries.getEndBoundaryCondition());
 	}
 

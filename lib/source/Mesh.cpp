@@ -210,6 +210,7 @@ FrontierType Mesh::getBeginFrontierType()
 	FrontierType beginFrontierType;
 	try
 	{
+		
 		if(this -> positionOfNodes[0] == this -> positionSurfaceOfElements[0])
 		{
 			beginFrontierType = CONNECTED;
@@ -237,11 +238,12 @@ FrontierType Mesh::getEndFrontierType()
 	FrontierType endFrontierType;
 	try
 	{
-		if(this -> positionOfNodes[n] == this -> positionSurfaceOfElements[n + 1])
+		
+		if(this -> positionOfNodes[n-1] == this -> positionSurfaceOfElements[n])
 		{
 			endFrontierType = CONNECTED;
 		} 
-		else if (this -> positionOfNodes[n] != this -> positionSurfaceOfElements[n + 1])
+		else if (this -> positionOfNodes[n-1] != this -> positionSurfaceOfElements[n])
 		{
 			endFrontierType = UNCONNECTED;
 		}
@@ -341,3 +343,4 @@ void Mesh::eastTypeGridAdder(int numOfNod, double wallLen)
 	this -> numberOfNodes = finalNode + 1;
 	this -> wallLength = sum;
 }
+

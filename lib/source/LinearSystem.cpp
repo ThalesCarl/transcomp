@@ -27,17 +27,6 @@ void LinearSystem::setValueToVector(int index, double value)
 
 void LinearSystem::solve()
 {
-	int numberOfNodes = this -> matrixOrder;
-    cout << "Inicio matrix \n";
-    for (int i = 0; i < numberOfNodes; i++)
-    {
-        for(int j = 0; j < numberOfNodes; j++)
-        {
-            cout << this -> matrixOfCoeficients[i][j] << ", ";
-        }
-        cout << endl;
-    }
-
     KSP            ksp;          /* linear solver context */
     Vec            x,b;          /* solution, residual vectors */
     Mat            A;            

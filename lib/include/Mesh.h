@@ -5,6 +5,7 @@
 #include "info.h"
 #include <vector>
 #include <string>
+#include <cmath>
 using namespace std;
 
 class Mesh
@@ -49,6 +50,7 @@ private:
 	void eastTypeGridAdder(int numberOfNodes, double wallLength);
 	void setPositionValue(int controlVolumeIndex, double value);
 	void setSurfaceValue(int surfaceIndex, double value);
+	
 };
 
 #endif
