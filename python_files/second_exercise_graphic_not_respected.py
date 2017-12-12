@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Created on Thu Nov  2 14:13:20 2017
+Created on Fri Nov 24 08:26:53 2017
 
 @author: tclavoratti
 """
+
 
 import numpy as np
 import matplotlib.pyplot as plt
 
 
-finiteVolumeDataEQ = np.loadtxt('../results/secondExerciseDivisionNotRespectedEquivalentResistanceVC.csv',dtype=float,delimiter=',',skiprows=1)
+finiteVolumeDataEQ = np.loadtxt('../results/.csv',dtype=float,delimiter=',',skiprows=1)
 finiteVolumeDataLI = np.loadtxt('../results/secondExerciseDivisionNotRespectedLinearInterpolationVC.csv',dtype=float,delimiter=',',skiprows=1)
 analyticalSolutionData = np.loadtxt('../results/secondExerciseDivisionNotRespectedAN.csv',dtype=float,delimiter=',',skiprows=1)
 

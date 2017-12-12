@@ -40,7 +40,7 @@ int main()
 		contVolEquivResistA.writeSolutionToCsv("../results/second_exercise/west_center", "division_not_respected_equivalent_resistance_VC");
 		infoWithout.interfaceOperation = LINEAR_INTERPOLATION;
 		ControlVolume  contVolLinInterpA(infoWithout);
-		contVolLinInterpA.writeSolutionToCsv("../results/second_exercise/west_center", "division_not_linear_interpolation_resistance_VC");
+		contVolLinInterpA.writeSolutionToCsv("../results/second_exercise/west_center", "division_not_linear_interpolation_VC");
 
 		infoWithout.wallLength1 = 2.9;
 		infoWithout.wallLength2 = 1.6;
@@ -113,21 +113,22 @@ int main()
 		toFile.open("../results/second_exercise/west_center/maximum_error.csv",fstream::trunc);
 		toFile << "number_of_nodes_first_material, number_of_nodes_second_material, maximum_error_equivalent_resistance, maximum_error_linear_interpolation" << endl;
 		toFile << scientific;
-		for (int i = 3; i < 10; ++i)
+		for (int i = 0; i < 5; ++i)
 		{
-			infoMaximum.numberOfNodes1 = i;
-			for (int j = 3; j < 10; j++)
-			{
-				toFile << i << ", "  << j << ", ";
-				infoMaximum.numberOfNodes2 = j;
-				vector<double> errorsVec;
 
+			infoMaximum.numberOfNodes1 = 5*pow(2,i);
+
+			for (int j = 0; j < 5; j++)
+			{
 				
+				infoMaximum.numberOfNodes2 = 5*pow(2,j);				
+				toFile << infoMaximum.numberOfNodes1 << ", "  << infoMaximum.numberOfNodes2 << ", ";
+				vector<double> errorsVec;
 
 				infoMaximum.interfaceOperation = EQUIVALENT_RESISTANCE;
 				ControlVolume contVolEquivResistC(infoMaximum);
 				AnalyticalSolution analytSolC(infoMaximum);
-				for(int k = 0; k < i + j; k++)
+				for(int k = 0; k < infoMaximum.numberOfNodes1 + infoMaximum.numberOfNodes2; k++)
 				{
 					errorsVec.push_back(abs(contVolEquivResistC.getTemperature(k) - analytSolC[k]));
 				}
@@ -173,7 +174,7 @@ int main()
 		contVolEquivResistA.writeSolutionToCsv("../results/second_exercise/west_east", "division_not_respected_equivalent_resistance_VC");
 		infoWithout.interfaceOperation = LINEAR_INTERPOLATION;
 		ControlVolume  contVolLinInterpA(infoWithout);
-		contVolLinInterpA.writeSolutionToCsv("../results/second_exercise/west_east", "division_not_linear_interpolation_resistance_VC");
+		contVolLinInterpA.writeSolutionToCsv("../results/second_exercise/west_east", "division_not_linear_interpolation_VC");
 
 		infoWithout.wallLength1 = 2.9;
 		infoWithout.wallLength2 = 1.6;
@@ -246,13 +247,16 @@ int main()
 		toFile.open("../results/second_exercise/west_east/maximum_error.csv",fstream::trunc);
 		toFile << "number_of_nodes_first_material, number_of_nodes_second_material, maximum_error_equivalent_resistance, maximum_error_linear_interpolation" << endl;
 		toFile << scientific;
-		for (int i = 3; i < 10; ++i)
+		for (int i = 0; i < 5; ++i)
 		{
-			infoMaximum.numberOfNodes1 = i;
-			for (int j = 3; j < 10; j++)
+
+			infoMaximum.numberOfNodes1 = 5*pow(2,i);
+
+			for (int j = 0; j < 5; j++)
 			{
-				toFile << i << ", "  << j << ", ";
-				infoMaximum.numberOfNodes2 = j;
+				
+				infoMaximum.numberOfNodes2 = 5*pow(2,j);				
+				toFile << infoMaximum.numberOfNodes1 << ", "  << infoMaximum.numberOfNodes2 << ", ";
 				vector<double> errorsVec;
 
 				
@@ -260,7 +264,7 @@ int main()
 				infoMaximum.interfaceOperation = EQUIVALENT_RESISTANCE;
 				ControlVolume contVolEquivResistC(infoMaximum);
 				AnalyticalSolution analytSolC(infoMaximum);
-				for(int k = 0; k < i + j; k++)
+				for(int k = 0; k < infoMaximum.numberOfNodes1 + infoMaximum.numberOfNodes2; k++)
 				{
 					errorsVec.push_back(abs(contVolEquivResistC.getTemperature(k) - analytSolC[k]));
 				}
@@ -306,7 +310,7 @@ int main()
 		contVolEquivResistA.writeSolutionToCsv("../results/second_exercise/center_center", "division_not_respected_equivalent_resistance_VC");
 		infoWithout.interfaceOperation = LINEAR_INTERPOLATION;
 		ControlVolume  contVolLinInterpA(infoWithout);
-		contVolLinInterpA.writeSolutionToCsv("../results/second_exercise/center_center", "division_not_linear_interpolation_resistance_VC");
+		contVolLinInterpA.writeSolutionToCsv("../results/second_exercise/center_center", "division_not_linear_interpolation_VC");
 
 		infoWithout.wallLength1 = 2.9;
 		infoWithout.wallLength2 = 1.6;
@@ -379,13 +383,16 @@ int main()
 		toFile.open("../results/second_exercise/center_center/maximum_error.csv",fstream::trunc);
 		toFile << "number_of_nodes_first_material, number_of_nodes_second_material, maximum_error_equivalent_resistance, maximum_error_linear_interpolation" << endl;
 		toFile << scientific;
-		for (int i = 3; i < 10; ++i)
+		for (int i = 0; i < 5; ++i)
 		{
-			infoMaximum.numberOfNodes1 = i;
-			for (int j = 3; j < 10; j++)
+
+			infoMaximum.numberOfNodes1 = 5*pow(2,i);
+
+			for (int j = 0; j < 5; j++)
 			{
-				toFile << i << ", "  << j << ", ";
-				infoMaximum.numberOfNodes2 = j;
+				
+				infoMaximum.numberOfNodes2 = 5*pow(2,j);				
+				toFile << infoMaximum.numberOfNodes1 << ", "  << infoMaximum.numberOfNodes2 << ", ";
 				vector<double> errorsVec;
 
 				
@@ -393,7 +400,7 @@ int main()
 				infoMaximum.interfaceOperation = EQUIVALENT_RESISTANCE;
 				ControlVolume contVolEquivResistC(infoMaximum);
 				AnalyticalSolution analytSolC(infoMaximum);
-				for(int k = 0; k < i + j; k++)
+				for(int k = 0; k < infoMaximum.numberOfNodes1 + infoMaximum.numberOfNodes2; k++)
 				{
 					errorsVec.push_back(abs(contVolEquivResistC.getTemperature(k) - analytSolC[k]));
 				}
@@ -439,7 +446,7 @@ int main()
 		contVolEquivResistA.writeSolutionToCsv("../results/second_exercise/center_east", "division_not_respected_equivalent_resistance_VC");
 		infoWithout.interfaceOperation = LINEAR_INTERPOLATION;
 		ControlVolume  contVolLinInterpA(infoWithout);
-		contVolLinInterpA.writeSolutionToCsv("../results/second_exercise/center_east", "division_not_linear_interpolation_resistance_VC");
+		contVolLinInterpA.writeSolutionToCsv("../results/second_exercise/center_east", "division_not_linear_interpolation_VC");
 
 		infoWithout.wallLength1 = 2.9;
 		infoWithout.wallLength2 = 1.6;
@@ -512,12 +519,16 @@ int main()
 		toFile.open("../results/second_exercise/center_east/maximum_error.csv",fstream::trunc);
 		toFile << "number_of_nodes_first_material, number_of_nodes_second_material, maximum_error_equivalent_resistance, maximum_error_linear_interpolation" << endl;
 		toFile << scientific;
-		for (int i = 3; i < 10; ++i)
+		for (int i = 0; i < 5; ++i)
 		{
-			infoMaximum.numberOfNodes1 = i;
-			for (int j = 3; j < 10; j++)
+
+			infoMaximum.numberOfNodes1 = 5*pow(2,i);
+
+			for (int j = 0; j < 5; j++)
 			{
-				toFile << i << ", "  << j << ", ";
+				
+				infoMaximum.numberOfNodes2 = 5*pow(2,j);				
+				toFile << infoMaximum.numberOfNodes1 << ", "  << infoMaximum.numberOfNodes2 << ", ";
 				infoMaximum.numberOfNodes2 = j;
 				vector<double> errorsVec;
 
@@ -526,7 +537,7 @@ int main()
 				infoMaximum.interfaceOperation = EQUIVALENT_RESISTANCE;
 				ControlVolume contVolEquivResistC(infoMaximum);
 				AnalyticalSolution analytSolC(infoMaximum);
-				for(int k = 0; k < i + j; k++)
+				for(int k = 0; k < infoMaximum.numberOfNodes1 + infoMaximum.numberOfNodes2; k++)
 				{
 					errorsVec.push_back(abs(contVolEquivResistC.getTemperature(k) - analytSolC[k]));
 				}
