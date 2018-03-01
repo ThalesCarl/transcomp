@@ -8,7 +8,11 @@ enum GridType {CENTER, WEST, EAST, BOTH};
 enum InterfaceOperation {EQUIVALENT_RESISTANCE, LINEAR_INTERPOLATION};
 enum FrontierType {CONNECTED, UNCONNECTED, UNEXPECTED};
 
-//sei la 2
+
+
+
+
+
 struct PlainWallInfo
 {
 	int numberOfNodes;
@@ -32,6 +36,22 @@ struct DoublePlainWallInfo
 	GridType gridType2;
 	double thermalConduction1;
 	double thermalConduction2;
+	BoundaryCondition beginBoundaryConditionType;
+	BoundaryCondition endBoundaryConditionType;
+	std::vector<double> beginBoundaryConditionInfo;
+	std::vector<double> endBoundaryConditionInfo;
+	InterfaceOperation interfaceOperation;
+};
+
+struct TransientPlainWallInfo
+{
+	int numberOfNodes;
+	double wallLength;
+	GridType gridType;
+	double thermalConduction;
+	double density;
+	double cp;
+	double biotNumber;
 	BoundaryCondition beginBoundaryConditionType;
 	BoundaryCondition endBoundaryConditionType;
 	std::vector<double> beginBoundaryConditionInfo;
