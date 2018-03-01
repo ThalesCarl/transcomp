@@ -9,6 +9,7 @@
 #include <fstream>
 #include <iomanip>
 #include <ThermalConduction.h>
+#include <biot_solver.h>
 using namespace std;
 
 class AnalyticalSolution
@@ -16,6 +17,7 @@ class AnalyticalSolution
 public:
 	AnalyticalSolution(PlainWallInfo data);
 	AnalyticalSolution(DoublePlainWallInfo data);
+	AnalyticalSolution(TransientPlainWallInfo data);
 
 	void writeSolutionToCsv(string directory, string fileName);
 	void printSolutionOnTheScreen();
@@ -23,6 +25,7 @@ public:
 
 private:
 	vector<double> temperatureField;
+	vector< vector<double>> transientTemperatureField;
 
 	Mesh mesh;
 	Boundary boundaries;

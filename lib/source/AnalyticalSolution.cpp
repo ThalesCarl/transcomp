@@ -37,6 +37,15 @@ AnalyticalSolution::AnalyticalSolution(DoublePlainWallInfo data):
 	}
 }
 
+AnalyticalSolution(TransientPlainWallInfo data):
+	mesh(data.numberOfNodes, data.wallLength, data.gridType),
+	vectorK(data.numberOfNodes,data.thermalConduction),
+	boundaries(data.beginBoundaryConditionType, data.endBoundaryConditionType, data.beginBoundaryConditionInfo, data.endBoundaryConditionInfo)
+{
+	
+
+}
+
 
 void AnalyticalSolution::writeSolutionToCsv(string directory, string fileName)
 {
