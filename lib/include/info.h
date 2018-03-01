@@ -8,6 +8,7 @@ enum GridType {CENTER, WEST, EAST, BOTH};
 enum InterfaceOperation {EQUIVALENT_RESISTANCE, LINEAR_INTERPOLATION};
 enum FrontierType {CONNECTED, UNCONNECTED, UNEXPECTED};
 
+//sei la 2
 struct PlainWallInfo
 {
 	int numberOfNodes;
