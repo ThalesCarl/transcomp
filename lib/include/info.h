@@ -38,4 +38,20 @@ struct DoublePlainWallInfo
 	InterfaceOperation interfaceOperation;
 };
 
+struct TransientPlainWallInfo
+{
+	int numberOfNodes;
+	double wallLength;
+	GridType gridType;
+	double thermalConduction;
+	double density;
+	double cp;
+	double biotNumber;
+	BoundaryCondition beginBoundaryConditionType;
+	BoundaryCondition endBoundaryConditionType;
+	std::vector<double> beginBoundaryConditionInfo;
+	std::vector<double> endBoundaryConditionInfo;
+	InterfaceOperation interfaceOperation;
+};
+
 #endif
