@@ -35,6 +35,7 @@ private:
 	
 
 	void addToTemperatureField(int controlVolumeIndex, double value);
+	void getZetaNumbers(double biotNumber, double &zeta)
 	
 };
 

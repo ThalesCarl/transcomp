@@ -47,6 +47,8 @@ struct TransientPlainWallInfo
 	double density;
 	double cp;
 	double biotNumber;
+	double timeStep;
+	double initialTemperature;
 	BoundaryCondition beginBoundaryConditionType;
 	BoundaryCondition endBoundaryConditionType;
 	std::vector<double> beginBoundaryConditionInfo;

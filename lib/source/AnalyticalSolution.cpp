@@ -42,7 +42,33 @@ AnalyticalSolution(TransientPlainWallInfo data):
 	vectorK(data.numberOfNodes,data.thermalConduction),
 	boundaries(data.beginBoundaryConditionType, data.endBoundaryConditionType, data.beginBoundaryConditionInfo, data.endBoundaryConditionInfo)
 {
+	this -> transientTemperatureField[0].resize(mesh.getNumberOfNodes());
+	for (int i = 0; i < mesh.getNumberOfNodes(); ++i)
+	{
+		this -> transientTemperatureField[0][i] = data.initialTemperature;
+	}
 	
+	vector<double> zetaNumbers.(50);
+	getZetaNumbers(data.biotNumber, zetaNumbers)
+	
+	double timePosition = 0;
+	double Tinf = this -> boundaries.getEndBoundaryCondition()
+	double diff = abs(this -> transientTemperatureField[timePosition][0] - Tinf;
+	while (diff > 1)
+	{
+		double alpha = data.thermalConduction/(data.density*data.cp)
+		double fourierNumber = (alpha*timePosition)/(data.wallLength*data.wallLength);
+		sum = 0;
+		for (int i = 0; i < zetaNumbers.size(); ++i)
+		{
+			double zeta = zetaNumbers[i]
+			double cn = (4*sin(zeta))/(2*zeta+sin(2*zeta));
+			
+		}
+		
+		diff = abs(this -> transientTemperatureField[timePosition][0] - Tinf);
+		timePosition += data.timeStep;
+	}
 
 }
 
