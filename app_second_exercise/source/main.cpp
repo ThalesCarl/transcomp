@@ -23,17 +23,17 @@ int main()
 
 		infoWithout.numberOfNodes1 = 5;
 		infoWithout.numberOfNodes2 = 3;
-		infoWithout.wallLength1 = 3.0;
-		infoWithout.wallLength2 = 1.5;
+		infoWithout.wallLength1 = 0.083;
+		infoWithout.wallLength2 = 0.027;
 		infoWithout.gridType1 = WEST;
-		infoWithout.gridType2 = CENTER;
-		infoWithout.thermalConduction1 = 80.0;
-		infoWithout.thermalConduction2 = 20.0;
+		infoWithout.gridType2 = EAST;
+		infoWithout.thermalConduction1 = 10.0;
+		infoWithout.thermalConduction2 = 1;
 		infoWithout.beginBoundaryConditionType = PRESCRIBED_FLUX;
 		infoWithout.endBoundaryConditionType = CONVECTION;
-		infoWithout.beginBoundaryConditionInfo.push_back(300.0);
-		infoWithout.endBoundaryConditionInfo.push_back(25.0);
-		infoWithout.endBoundaryConditionInfo.push_back(298.0);
+		infoWithout.beginBoundaryConditionInfo.push_back(5000.0);
+		infoWithout.endBoundaryConditionInfo.push_back(70.0);
+		infoWithout.endBoundaryConditionInfo.push_back(303.0);
 		
 		infoWithout.interfaceOperation = EQUIVALENT_RESISTANCE;
 		ControlVolume contVolEquivResistA(infoWithout);
@@ -42,8 +42,8 @@ int main()
 		ControlVolume  contVolLinInterpA(infoWithout);
 		contVolLinInterpA.writeSolutionToCsv("../results/second_exercise/west_center", "division_not_linear_interpolation_VC");
 
-		infoWithout.wallLength1 = 2.9;
-		infoWithout.wallLength2 = 1.6;
+		infoWithout.wallLength1 = 0.083;
+		infoWithout.wallLength2 = 0.027;
 		AnalyticalSolution analytSolA(infoWithout);
 		analytSolA.writeSolutionToCsv("../results/second_exercise/west_center", "division_not_respected_AN");
 		

@@ -69,7 +69,7 @@ AnalyticalSolution::AnalyticalSolution(DoublePlainWallInfo data):
 // 		timePosition += data.timeStep;
 // 	}
 
-}
+
 
 
 void AnalyticalSolution::writeSolutionToCsv(string directory, string fileName)

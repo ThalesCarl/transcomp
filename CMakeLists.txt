@@ -51,13 +51,8 @@ set (CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/CMakeModules")
 ##############
 # BOOST
 ##############
-set (BOOST_VERSION "1.63.0")
 set (Components_Boost chrono context filesystem graph_parallel log mpi program_options regex serialization signals system thread timer wave date_time graph math_c99 random test_exec_monitor exception unit_test_framework serialization)
-set (BOOST_ROOT $ENV{BOOST_DIR}/${BUILD_TYPE_OUTPUT_DIRECTORY})
-set (Boost_USE_STATIC_LIBS ON)
-set (Boost_USE_STATIC_RUNTIME ON)
-set (Boost_USE_MULTITHREADED ON)
-find_package (Boost ${BOOST_VERSION} COMPONENTS ${Components_Boost} REQUIRED)
+find_package (Boost COMPONENTS ${Components_Boost} REQUIRED)
 if (Boost_FOUND)
     include_directories (${Boost_INCLUDE_DIRS})
 endif ()
@@ -96,6 +91,9 @@ add_subdirectory (lib)
 add_subdirectory (libTest)
 add_subdirectory (app_first_exercise)
 add_subdirectory (app_second_exercise)
+add_subdirectory (app_trabalho)
+
+
 
 ##################################################################
 # DISPLAY INFORMATION

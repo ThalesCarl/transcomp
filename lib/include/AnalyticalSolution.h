@@ -9,7 +9,7 @@
 #include <fstream>
 #include <iomanip>
 #include <ThermalConduction.h>
-#include <biot_solver.h>
+// #include <biot_solver.h>
 using namespace std;
 
 class AnalyticalSolution
@@ -35,7 +35,7 @@ private:
 	
 
 	void addToTemperatureField(int controlVolumeIndex, double value);
-	void getZetaNumbers(double biotNumber, double &zeta)
+	void getZetaNumbers(double biotNumber, double &zeta);
 	
 };
 
