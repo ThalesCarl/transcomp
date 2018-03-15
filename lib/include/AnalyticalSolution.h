@@ -17,7 +17,7 @@ class AnalyticalSolution
 public:
 	AnalyticalSolution(PlainWallInfo data);
 	AnalyticalSolution(DoublePlainWallInfo data);
-	AnalyticalSolution(TransientPlainWallInfo data);
+	// AnalyticalSolution(TransientPlainWallInfo data);
 
 	void writeSolutionToCsv(string directory, string fileName);
 	void printSolutionOnTheScreen();
