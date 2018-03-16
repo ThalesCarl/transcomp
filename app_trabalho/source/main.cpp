@@ -130,7 +130,7 @@ int main()
 				errorsVec.push_back(abs(contVolMaxLinInterp.getTemperature(k) - analytSolMax[k]));
 			}
 			maximumError = *max_element(errorsVec.begin(),errorsVec.end());
-			toFile << maximumError << ", " << endl;
+			toFile << maximumError << endl;
 		}
 		toFile.close();
 		cout << "maximum Error values saved at ../results/maximum_error.csv" << endl;
