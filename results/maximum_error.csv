@@ -1,0 +1,7 @@
+numberOfNodes, maximum_error_equivalent_resistance, maximum_error_linear_interpolation
+5, 1.7053e-13, 11.7672
+10, 1.64846e-12, 5.57394
+20, 6.48015e-12, 2.71551
+40, 8.41283e-12, 1.34057
+80, 7.67386e-12, 0.666069
+160, 5.8094e-11, 0.33199
