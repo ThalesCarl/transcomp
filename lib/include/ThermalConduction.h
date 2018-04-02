@@ -13,12 +13,15 @@ public:
 	ThermalConduction(int numberOfNodes, double k);
 	ThermalConduction(int numberOfNodes1,double k1, int numberOfNodes2, double k2);
 	ThermalConduction(vector<double> inputThermalConductions);
+	ThermalConduction(vector<double> polynomialCoefficients, vector<double> temperatureField);
 		
 	
 	//get functions
 	double operator[](const int ControlVolumeIndex);
 	double getWestInterface(Mesh mesh, int ControlVolumeIndex, InterfaceOperation operation);
 	double getEastInterface(Mesh mesh, int index, InterfaceOperation operation);
+
+	void setNonLinearProblem(vector<double> polynomialCoefficients, vector<double> temperatureField)
 	
 private:
 	vector<double> nodeThermalConductions;

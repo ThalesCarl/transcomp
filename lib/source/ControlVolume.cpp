@@ -61,6 +61,51 @@ ControlVolume::ControlVolume(DoublePlainWallInfo data):
 	}
 }
 
+ControlVolume::ControlVolume(PlainWallNonLinearInfo data):	
+		mesh(data.numberOfNodes, data.wallLength, data.gridType),
+		vectorK(data.numberOfNodes, 0.0),
+		boundaries(data.beginBoundaryConditionType, data.endBoundaryConditionType, data.beginBoundaryConditionInfo, data.endBoundaryConditionInfo), 
+		solver(data.numberOfNodes),
+		interfaceOperation(data.interfaceOperation)
+{
+	int n = this -> mesh.getNumberOfNodes();
+	this -> temperatureField.resize(n);
+
+	//First guess for the temperature field
+	for (int i = 0; i < n; ++i)
+	{
+		double a = data.beginBoundaryConditionInfo;
+		double b = data.endBoundaryConditionInfo;
+		double L = data.wallLength;
+		double x = mesh.getPosition(i);
+		temperatureField[i] = a + ((b-a)*x)/(L);
+	}
+
+
+	beginProcessor();
+	for (int i = 1; i < n - 1; i++)
+	{
+		double aw , ae, ap;
+		aw = vectorK.getWestInterface(mesh,i, this -> interfaceOperation)/this -> mesh.westDistance(i);
+		ae = vectorK.getEastInterface(mesh,i,this -> interfaceOperation)/this -> mesh.eastDistance(i);
+		ap = (aw + ae);
+		solver.setValueToMatrix(i,i-1,(-1)*aw);
+		solver.setValueToMatrix(i,i+1,(-1)*ae);
+		solver.setValueToMatrix(i,i,ap);	
+	}
+	endProcessor();
+	
+	this -> solver.solve();
+
+	this -> temperatureField.resize(n);
+	for (int i = 0; i < n; i++)
+	{
+		this -> temperatureField[i] = this -> solver[i];
+	}
+}
+
+
+
 void ControlVolume::writeSolutionToCsv(string directory, string fileName)
 {
 	

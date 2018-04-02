@@ -62,7 +62,6 @@ struct PlainWallNonLinearInfo
 	vector <double> thermalConductionCoefficients;
 	double wallLength;
 	GridType gridType;
-	double thermalConduction;
 	BoundaryCondition beginBoundaryConditionType;
 	BoundaryCondition endBoundaryConditionType;
 	std::vector<double> beginBoundaryConditionInfo;

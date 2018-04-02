@@ -18,6 +18,8 @@ ThermalConduction::ThermalConduction(vector<double> inputThermalConductions)
 	}
 }
 
+
+
 ThermalConduction::ThermalConduction(int numberOfNodes1,double k1, int numberOfNodes2, double k2)
 {
 	this -> nodeThermalConductions.resize(numberOfNodes1+numberOfNodes2);
@@ -87,4 +89,18 @@ double ThermalConduction::getEastInterface(Mesh mesh, int index, InterfaceOperat
 	}
 	return numerator/denominator;
 
+}
+
+void ThermalConduction::setNonLinearProblem(vector<double> polynomialCoefficients, vector<double> temperatureField)
+{
+	this -> nodeThermalConductions.resize(temperatureField.size());
+	for (int i = 0; i < temperatureField.size(); ++i)
+	{
+		double sum = 0.0;
+		for (int j = 0; j < polynomialCoefficients.size(); ++j)
+		{
+			sum += polynomialCoefficients[j]*pow(temperatureField[i],j);
+		}
+		setNodeThermalConduction(i,sum);
+	}
 }
