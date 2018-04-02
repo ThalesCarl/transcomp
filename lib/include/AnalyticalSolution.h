@@ -18,6 +18,7 @@ public:
 	AnalyticalSolution(PlainWallInfo data);
 	AnalyticalSolution(DoublePlainWallInfo data);
 	// AnalyticalSolution(TransientPlainWallInfo data);
+	AnalyticalSolution(PlainWallNonLinearInfo data);
 
 	void writeSolutionToCsv(string directory, string fileName);
 	void printSolutionOnTheScreen();
@@ -32,6 +33,7 @@ private:
 	ThermalConduction vectorK;
 	double evalFirstProblemTemperatureLaw(double position);
 	double evalSecondProblemTemperatureLaw(double position, DoublePlainWallInfo data);
+	double evalNonLinearTemperatureLaw(double position);
 	
 
 	void addToTemperatureField(int controlVolumeIndex, double value);

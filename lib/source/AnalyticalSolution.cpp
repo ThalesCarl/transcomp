@@ -69,6 +69,20 @@ AnalyticalSolution::AnalyticalSolution(DoublePlainWallInfo data):
 // 		timePosition += data.timeStep;
 // 	}
 
+AnalyticalSolution(PlainWallNonLinearInfo data):
+	mesh(data.numberOfNodes, data.wallLength, data.gridType),
+	vectorK(data.numberOfNodes,data.thermalConduction),
+	boundaries(data.beginBoundaryConditionType, data.endBoundaryConditionType, data.beginBoundaryConditionInfo, data.endBoundaryConditionInfo)		
+{
+	this -> temperatureField.resize(this -> mesh.getNumberOfNodes());
+	double temporaryTemperatureValue;
+	for (int node = 0; node < mesh.getNumberOfNodes(); node++)
+	{
+		temporaryTemperatureValue = evalNonLinearTemperatureLaw(mesh.centerPoint(node));
+		addToTemperatureField(node,temporaryTemperatureValue);
+	}
+}
+
 
 
 
@@ -145,4 +159,11 @@ double AnalyticalSolution::evalSecondProblemTemperatureLaw(double position, Doub
 		cout << "Invalid position _ AN" << endl;
 		return -100;
 	}
+}
+
+double evalNonLinearTemperatureLaw(double x)
+{
+	//the output of this function is expressed in degrees celsius and the input must be in meters.
+	double value;
+	value = 160 - sqrt(3600 +160000 * x);
 }
