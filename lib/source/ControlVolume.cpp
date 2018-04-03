@@ -81,6 +81,9 @@ ControlVolume::ControlVolume(PlainWallNonLinearInfo data):
 		temperatureField[i] = a + ((b-a)*x)/(L);
 	}
 
+	
+	vectorK.setNonLinearProblem(data.thermalConductionCoefficients,temperatureField);
+
 
 	beginProcessor();
 	for (int i = 1; i < n - 1; i++)

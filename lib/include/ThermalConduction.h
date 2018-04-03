@@ -21,7 +21,7 @@ public:
 	double getWestInterface(Mesh mesh, int ControlVolumeIndex, InterfaceOperation operation);
 	double getEastInterface(Mesh mesh, int index, InterfaceOperation operation);
 
-	void setNonLinearProblem(vector<double> polynomialCoefficients, vector<double> temperatureField)
+	void setNonLinearProblem(vector<double> polynomialCoefficients, vector<double> temperatureField);
 	
 private:
 	vector<double> nodeThermalConductions;

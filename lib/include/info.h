@@ -61,6 +61,7 @@ struct PlainWallNonLinearInfo
 	int numberOfNodes;
 	vector <double> thermalConductionCoefficients;
 	double wallLength;
+	double tolerance;
 	GridType gridType;
 	BoundaryCondition beginBoundaryConditionType;
 	BoundaryCondition endBoundaryConditionType;
