@@ -2,7 +2,7 @@
 #define MESH_H
 
 #include <iostream>
-#include "info.h"
+#include <info.h>
 #include <vector>
 #include <string>
 #include <cmath>

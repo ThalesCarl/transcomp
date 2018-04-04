@@ -32,7 +32,7 @@ ConvergenceCriteria::ConvergenceCriteria(vector<double> tempField, vector<double
 	this -> tolerance = tol;
 	
 
-	if(quadratic
+	if(quadratic)
 	{
 		double sum = 0.0;
 		for (int i = 0; i < tempField.size(); ++i)

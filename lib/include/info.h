@@ -3,11 +3,12 @@
 
 #include <vector>
 
+
 enum BoundaryCondition {PRESCRIBED_TEMPERATURE,PRESCRIBED_FLUX,CONVECTION};
 enum GridType {CENTER, WEST, EAST, BOTH};
 enum InterfaceOperation {EQUIVALENT_RESISTANCE, LINEAR_INTERPOLATION};
 enum FrontierType {CONNECTED, UNCONNECTED, UNEXPECTED};
-enum ConvergenceCriteriaType {FIRST, SECOND, THIRD, FOURTH, FIFTH, SIXTH}
+enum ConvergenceCriteriaType {FIRST, SECOND, THIRD, FOURTH, FIFTH, SIXTH};
 
 struct PlainWallInfo
 {
@@ -60,8 +61,8 @@ struct TransientPlainWallInfo
 struct PlainWallNonLinearInfo
 {
 	int numberOfNodes;
-	vector <double> thermalConductionCoefficients;
-	AnalyticalSolution analyticalSolution;
+	std::vector <double> thermalConductionCoefficients;
+	std::vector <double> analyticalSolution;
 	double wallLength;
 	double tolerance;
 	GridType gridType;
@@ -72,7 +73,5 @@ struct PlainWallNonLinearInfo
 	std::vector<double> endBoundaryConditionInfo;
 	InterfaceOperation interfaceOperation;
 };
-
-
 
 #endif

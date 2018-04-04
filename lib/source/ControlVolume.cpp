@@ -74,16 +74,16 @@ ControlVolume::ControlVolume(PlainWallNonLinearInfo data):
 	//First guess for the temperature field
 	for (int i = 0; i < n; ++i)
 	{
-		double a = data.beginBoundaryConditionInfo;
-		double b = data.endBoundaryConditionInfo;
+		double a = data.beginBoundaryConditionInfo.back();
+		double b = data.endBoundaryConditionInfo.back();
 		double L = data.wallLength;
-		double x = mesh.getPosition(i);
+		double x = mesh.centerPoint(i);
 		this -> temperatureField[i] = a + ((b-a)*x)/(L);
 	}
 
 	for (int i = 0; i < n; ++i)
 	{
-		this -> oldTemperatureField = data.analyticalSolution[i];
+		this -> oldTemperatureField[i]= data.analyticalSolution[i];
 	}
 
 	ConvergenceCriteria convergence = selectConvergenceCriteria(data.convergenceCriteriaType);
@@ -262,9 +262,9 @@ double ControlVolume::getPosition(int ControlVolumeIndex)
 	return this -> mesh.centerPoint(ControlVolumeIndex);
 }
 
-ConvergenceCriteria ControlVolume::selectConvergenceCriteria(ConvergenceCriteriaType)
+ConvergenceCriteria ControlVolume::selectConvergenceCriteria(ConvergenceCriteriaType type)
 {
-	switch(data.convergenceCriteriaType):
+	switch(type):
 	{
 		case FIRST:
 		{

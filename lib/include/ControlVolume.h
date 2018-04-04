@@ -8,6 +8,7 @@
 #include <Mesh.h>
 #include <Boundary.h>
 #include <LinearSystem.h>
+#include <ConvergenceCriteria.h>
 using namespace std;
 using vector_double_2d = vector<vector<double>>;
 

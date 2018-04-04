@@ -69,9 +69,9 @@ AnalyticalSolution::AnalyticalSolution(DoublePlainWallInfo data):
 // 		timePosition += data.timeStep;
 // 	}
 
-AnalyticalSolution(PlainWallNonLinearInfo data):
+AnalyticalSolution::AnalyticalSolution(PlainWallNonLinearInfo data):
 	mesh(data.numberOfNodes, data.wallLength, data.gridType),
-	vectorK(data.numberOfNodes,data.thermalConduction),
+	vectorK(data.numberOfNodes,0.0),
 	boundaries(data.beginBoundaryConditionType, data.endBoundaryConditionType, data.beginBoundaryConditionInfo, data.endBoundaryConditionInfo)		
 {
 	this -> temperatureField.resize(this -> mesh.getNumberOfNodes());
