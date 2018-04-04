@@ -27,12 +27,12 @@ ConvergenceCriteria::ConvergenceCriteria(vector<double> tempField, vector<double
 	this -> maximumError = maxError;
 }
 
-ConvergenceCriteria::ConvergenceCriteria(vector<double> tempField, vector<double> oldTempField, int numbNod, bool quadraditc, double tol)
+ConvergenceCriteria::ConvergenceCriteria(vector<double> tempField, vector<double> oldTempField, int numbNod, bool quadratic, double tol)
 {
 	this -> tolerance = tol;
 	
 
-	if(quadraditc)
+	if(quadratic
 	{
 		double sum = 0.0;
 		for (int i = 0; i < tempField.size(); ++i)

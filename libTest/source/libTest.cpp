@@ -241,6 +241,40 @@ TestCase(LinearSystemTest)
 	}
 }
 
+TestCase(LinearSystemTest)
+{
+	LinearSystem solver(3);
+	for (int i = 0; i < 3; i++)
+	{
+		for (int j = 0; j < 3; j++)
+		{
+			if(i==j)
+				solver.setValueToMatrix(i,j, double((i+1.3)*(j-1.2)));
+			else
+				solver.setValueToMatrix(i,j, double((i+1.5)*(j-1.1)));
+
+		}
+	}
+	for (int i = 0; i < 3; i++)
+	{
+		solver.setValueToVector(i,double(i+0.3));
+	}
+	
+	
+	solver.solveTDMA();
+	
+	
+	vector<double> exactSolution(3);
+	exactSolution[0] = -1.973309906291830;
+	exactSolution[1] = -2.400016733601070;
+	exactSolution[2] = -2.324715528781790;
+
+	for (int i = 0; i < 3; i++)
+	{
+		checkClose(solver[i], exactSolution[i], 1e-8);
+	}
+}
+
 TestCase(ThermalConductionAndMeshTest)
 {
 	Mesh newMesh(4,1.0,CENTER);

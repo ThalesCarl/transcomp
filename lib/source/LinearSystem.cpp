@@ -160,3 +160,50 @@ void LinearSystem::printSolution()
         cout << this -> solution[i] << endl;
     }
 }
+
+void LinearSystem::solveTDMA()
+{
+  double NaN;
+  double DEN;
+  NaN = nan("");
+
+  vector<double> A;
+  vector<double> B;
+  vector<double> C;
+  vector<double> D;
+
+  A.resize(this->matrixOrder);
+  B.resize(this->matrixOrder);
+  C.resize(this->matrixOrder);
+  D.resize(this->matrixOrder);
+
+  A[0] = this -> matrixOfCoeficients[0][0];
+  B[0] = this -> matrixOfCoeficients[0][1];
+  C[0] = NaN;
+  D[0] = this -> independentValues[0];
+  for(int i=1; i<this->matrixOrder-1; i++)
+  {
+    A[i] = this -> matrixOfCoeficients[i][i];
+    B[i] = this -> matrixOfCoeficients[i][i+1];
+    C[i] = this -> matrixOfCoeficients[i][i-1];
+    D[i] = this -> independentValues[i];
+  }
+  A[this->matrixOrder-1]=this -> matrixOfCoeficients[this -> matrixOrder-1][this -> matrixOrder - 1];
+  B[this->matrixOrder-1]=NaN;
+  C[this->matrixOrder-1]=this -> matrixOfCoeficients[this->matrixOrder-1][this->matrixOrder-2];
+  D[this->matrixOrder-1]=this -> independentValues[this->matrixOrder-1];
+
+
+  for(int i=1; i<matrixOrder; i++)
+  {
+    DEN=C[i]/A[i-1];
+    A[i]=A[i]-DEN*B[i-1];
+    D[i]=D[i]-DEN*D[i-1];
+  }
+  this->solution[matrixOrder-1]=D[matrixOrder-1]/A[matrixOrder-1];
+  for(int i=matrixOrder-2; i>-1; i--)
+  {
+    this->solution[i]=(D[i]-B[i]*this->solution[i+1])/A[i];
+  }
+  return(this->CampodeTemperaturas);
+}

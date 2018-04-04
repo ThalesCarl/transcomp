@@ -7,7 +7,7 @@ enum BoundaryCondition {PRESCRIBED_TEMPERATURE,PRESCRIBED_FLUX,CONVECTION};
 enum GridType {CENTER, WEST, EAST, BOTH};
 enum InterfaceOperation {EQUIVALENT_RESISTANCE, LINEAR_INTERPOLATION};
 enum FrontierType {CONNECTED, UNCONNECTED, UNEXPECTED};
-
+enum ConvergenceCriteriaType {FIRST, SECOND, THIRD, FOURTH, FIFTH, SIXTH}
 
 struct PlainWallInfo
 {
@@ -65,6 +65,7 @@ struct PlainWallNonLinearInfo
 	double wallLength;
 	double tolerance;
 	GridType gridType;
+	ConvergenceCriteriaType convergenceCriteriaType;
 	BoundaryCondition beginBoundaryConditionType;
 	BoundaryCondition endBoundaryConditionType;
 	std::vector<double> beginBoundaryConditionInfo;

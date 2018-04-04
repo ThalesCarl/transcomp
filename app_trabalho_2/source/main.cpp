@@ -13,8 +13,5 @@ using namespace std;
 int main()
 {
 
-	PetscInitialize(NULL,NULL,NULL,NULL);
-	
-	
-	PetscFinalize();	
+		
 }

@@ -81,30 +81,37 @@ ControlVolume::ControlVolume(PlainWallNonLinearInfo data):
 		this -> temperatureField[i] = a + ((b-a)*x)/(L);
 	}
 
-	//pensar em algum jeito de passar a solução analitica para o gerente.
-	
-	vectorK.setNonLinearProblem(data.thermalConductionCoefficients,temperatureField);
-
-
-	beginProcessor();
-	for (int i = 1; i < n - 1; i++)
+	for (int i = 0; i < n; ++i)
 	{
-		double aw , ae, ap;
-		aw = vectorK.getWestInterface(mesh,i, this -> interfaceOperation)/this -> mesh.westDistance(i);
-		ae = vectorK.getEastInterface(mesh,i,this -> interfaceOperation)/this -> mesh.eastDistance(i);
-		ap = (aw + ae);
-		solver.setValueToMatrix(i,i-1,(-1)*aw);
-		solver.setValueToMatrix(i,i+1,(-1)*ae);
-		solver.setValueToMatrix(i,i,ap);	
+		this -> oldTemperatureField = data.analyticalSolution[i];
 	}
-	endProcessor();
-	
-	this -> solver.solve();
 
-	this -> temperatureField.resize(n);
-	for (int i = 0; i < n; i++)
+	ConvergenceCriteria convergence = selectConvergenceCriteria(data.convergenceCriteriaType);
+	while(!convergence.doesItConverged())
 	{
-		this -> temperatureField[i] = this -> solver[i];
+		vectorK.setNonLinearProblem(data.thermalConductionCoefficients, this ->temperatureField);
+
+		beginProcessor();
+		for (int i = 1; i < n - 1; i++)
+		{
+			double aw , ae, ap;
+			aw = vectorK.getWestInterface(mesh,i, this -> interfaceOperation)/this -> mesh.westDistance(i);
+			ae = vectorK.getEastInterface(mesh,i,this -> interfaceOperation)/this -> mesh.eastDistance(i);
+			ap = (aw + ae);
+			solver.setValueToMatrix(i,i-1,(-1)*aw);
+			solver.setValueToMatrix(i,i+1,(-1)*ae);
+			solver.setValueToMatrix(i,i,ap);	
+		}
+		endProcessor();
+		
+		this -> solver.solve();
+
+		this -> temperatureField.resize(n);
+		for (int i = 0; i < n; i++)
+		{
+			this -> temperatureField[i] = this -> solver[i];
+		}
+		ConvergenceCriteria convergence = selectConvergenceCriteria(data.convergenceCriteriaType);
 	}
 }
 
@@ -255,4 +262,41 @@ double ControlVolume::getPosition(int ControlVolumeIndex)
 	return this -> mesh.centerPoint(ControlVolumeIndex);
 }
 
-
+ConvergenceCriteria ControlVolume::selectConvergenceCriteria(ConvergenceCriteriaType)
+{
+	switch(data.convergenceCriteriaType):
+	{
+		case FIRST:
+		{
+			ConvergenceCriteria convergence(this-> temperatureField, this -> oldTemperatureField.temperatureField,data.tolerance);
+		}
+		break;
+		case SECOND:
+		{
+			ConvergenceCriteria convergence(this-> temperatureField, this -> oldTemperatureField.temperatureField, boundaries.getBeginBoundaryCondition, boundaries.getEndBoundaryCondition, data.tolerance);
+		}
+		break;
+		case THIRD:
+		{
+			bool quadratic = true;
+			ConvergenceCriteria convergence(this-> temperatureField, this -> oldTemperatureField.temperatureField, mesh.getNumberOfNodes(),quadratic,data.tolerance);
+		}
+		break;
+		case FOURTH:
+		{
+			bool quadratic = false;
+			ConvergenceCriteria convergence(this-> temperatureField, this -> oldTemperatureField.temperatureField, mesh.getNumberOfNodes(),quadratic,data.tolerance);
+		}
+		case FIFTH:
+		{
+			ConvergenceCriteria convergence(this-> temperatureField, this -> oldTemperatureField.temperatureField, boundaries.getBeginBoundaryCondition, boundaries.getEndBoundaryCondition, mesh.getNumberOfNodes(), data.tolerance);
+		}
+		case SIXTH:
+		{
+			cout << "Não implementada ainda" << endl;
+		}
+		break;
+		default: cout << "Error in the selection of the convergence criteria" << endl;
+	}
+	return convergence;
+}

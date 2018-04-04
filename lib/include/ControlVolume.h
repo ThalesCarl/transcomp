@@ -31,8 +31,10 @@ private:
 	Boundary boundaries;
 	LinearSystem solver;
 	vector<double> temperatureField;
-	InterfaceOperation interfaceOperation;	
+	InterfaceOperation interfaceOperation;
+	vector<double> oldTemperatureField;	
 
+	ConvergenceCriteria selectConvergenceCriteria(ConvergenceCriteriaType);
 	void beginProcessor();
 	void endProcessor();
 };

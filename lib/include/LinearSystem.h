@@ -22,6 +22,7 @@ public:
 	void setValueToVector(int index, double Value);
 
 	void solve();
+	void solveTDMA();
 
 	void printValues();
 	void printSolution();
