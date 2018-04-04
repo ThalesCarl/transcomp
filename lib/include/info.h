@@ -8,6 +8,7 @@ enum GridType {CENTER, WEST, EAST, BOTH};
 enum InterfaceOperation {EQUIVALENT_RESISTANCE, LINEAR_INTERPOLATION};
 enum FrontierType {CONNECTED, UNCONNECTED, UNEXPECTED};
 
+
 struct PlainWallInfo
 {
 	int numberOfNodes;
@@ -60,6 +61,7 @@ struct PlainWallNonLinearInfo
 {
 	int numberOfNodes;
 	vector <double> thermalConductionCoefficients;
+	AnalyticalSolution analyticalSolution;
 	double wallLength;
 	double tolerance;
 	GridType gridType;

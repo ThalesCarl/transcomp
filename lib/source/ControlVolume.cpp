@@ -78,9 +78,10 @@ ControlVolume::ControlVolume(PlainWallNonLinearInfo data):
 		double b = data.endBoundaryConditionInfo;
 		double L = data.wallLength;
 		double x = mesh.getPosition(i);
-		temperatureField[i] = a + ((b-a)*x)/(L);
+		this -> temperatureField[i] = a + ((b-a)*x)/(L);
 	}
 
+	//pensar em algum jeito de passar a solução analitica para o gerente.
 	
 	vectorK.setNonLinearProblem(data.thermalConductionCoefficients,temperatureField);
 
