@@ -81,13 +81,14 @@ ControlVolume::ControlVolume(PlainWallNonLinearInfo data):
 		this -> temperatureField[i] = a + ((b-a)*x)/(L);
 	}
 
-	for (int i = 0; i < n; ++i)
-	{
-		this -> oldTemperatureField[i]= data.analyticalSolution[i];
-	}
+	// for (int i = 0; i < n; ++i)
+	// {
+	// 	this -> oldTemperatureField[i]= data.analyticalSolution[i];
+	// }
 
-	ConvergenceCriteria convergence = selectConvergenceCriteria(data.convergenceCriteriaType);
-	while(!convergence.doesItConverged())
+	
+	double maximumError = 1e6;
+	while(maximumError > data.tolerance)
 	{
 		vectorK.setNonLinearProblem(data.thermalConductionCoefficients, this ->temperatureField);
 
@@ -106,12 +107,19 @@ ControlVolume::ControlVolume(PlainWallNonLinearInfo data):
 		
 		this -> solver.solve();
 
-		this -> temperatureField.resize(n);
+		this -> oldTemperatureField = this -> temperatureField;
 		for (int i = 0; i < n; i++)
 		{
+			this -> oldTemperatureField[i] = this -> temperatureField[i];
 			this -> temperatureField[i] = this -> solver[i];
 		}
-		ConvergenceCriteria convergence = selectConvergenceCriteria(data.convergenceCriteriaType);
+		vector<double> errorsVec;
+		for (int i = 0; i < n; ++i)
+		{
+			errorsVec.push_back(abs(temperatureField[i]-oldTemperatureField[i]));
+		}
+		double maximumError = *max_element(errorsVec.begin(),errorsVec.end());
+
 	}
 }
 
@@ -262,41 +270,8 @@ double ControlVolume::getPosition(int ControlVolumeIndex)
 	return this -> mesh.centerPoint(ControlVolumeIndex);
 }
 
-ConvergenceCriteria ControlVolume::selectConvergenceCriteria(ConvergenceCriteriaType type)
-{
-	switch(type):
-	{
-		case FIRST:
-		{
-			ConvergenceCriteria convergence(this-> temperatureField, this -> oldTemperatureField.temperatureField,data.tolerance);
-		}
-		break;
-		case SECOND:
-		{
-			ConvergenceCriteria convergence(this-> temperatureField, this -> oldTemperatureField.temperatureField, boundaries.getBeginBoundaryCondition, boundaries.getEndBoundaryCondition, data.tolerance);
-		}
-		break;
-		case THIRD:
-		{
-			bool quadratic = true;
-			ConvergenceCriteria convergence(this-> temperatureField, this -> oldTemperatureField.temperatureField, mesh.getNumberOfNodes(),quadratic,data.tolerance);
-		}
-		break;
-		case FOURTH:
-		{
-			bool quadratic = false;
-			ConvergenceCriteria convergence(this-> temperatureField, this -> oldTemperatureField.temperatureField, mesh.getNumberOfNodes(),quadratic,data.tolerance);
-		}
-		case FIFTH:
-		{
-			ConvergenceCriteria convergence(this-> temperatureField, this -> oldTemperatureField.temperatureField, boundaries.getBeginBoundaryCondition, boundaries.getEndBoundaryCondition, mesh.getNumberOfNodes(), data.tolerance);
-		}
-		case SIXTH:
-		{
-			cout << "Não implementada ainda" << endl;
-		}
-		break;
-		default: cout << "Error in the selection of the convergence criteria" << endl;
-	}
-	return convergence;
-}
+// ConvergenceCriteria ControlVolume::selectConvergenceCriteria(ConvergenceCriteriaType type)
+// {
+	
+// 	return convergence;
+// }

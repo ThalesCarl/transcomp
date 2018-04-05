@@ -241,7 +241,7 @@ TestCase(LinearSystemTest)
 	}
 }
 
-TestCase(LinearSystemTest)
+TestCase(LinearSystemTestTDMA)
 {
 	LinearSystem solver(3);
 	for (int i = 0; i < 3; i++)
@@ -260,7 +260,7 @@ TestCase(LinearSystemTest)
 		solver.setValueToVector(i,double(i+0.3));
 	}
 	
-	
+	solver.printValues();
 	solver.solveTDMA();
 	
 	

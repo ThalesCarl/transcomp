@@ -164,7 +164,6 @@ void LinearSystem::printSolution()
 void LinearSystem::solveTDMA()
 {
   double NaN;
-  double DEN;
   NaN = nan("");
 
   vector<double> A;
@@ -181,7 +180,7 @@ void LinearSystem::solveTDMA()
   B[0] = this -> matrixOfCoeficients[0][1];
   C[0] = NaN;
   D[0] = this -> independentValues[0];
-  for(int i=1; i<this->matrixOrder-1; i++)
+  for(int i=1; i < this->matrixOrder-1; i++)
   {
     A[i] = this -> matrixOfCoeficients[i][i];
     B[i] = this -> matrixOfCoeficients[i][i+1];
@@ -193,17 +192,36 @@ void LinearSystem::solveTDMA()
   C[this->matrixOrder-1]=this -> matrixOfCoeficients[this->matrixOrder-1][this->matrixOrder-2];
   D[this->matrixOrder-1]=this -> independentValues[this->matrixOrder-1];
 
-
-  for(int i=1; i<matrixOrder; i++)
+  double aux;
+  for(int i=1; i < matrixOrder; ++i)
   {
-    DEN=C[i]/A[i-1];
-    A[i]=A[i]-DEN*B[i-1];
-    D[i]=D[i]-DEN*D[i-1];
+    aux = C[i]/A[i-1];
+    A[i]=A[i]-aux*B[i-1];
+    D[i]=D[i]-aux*D[i-1];
   }
-  this->solution[matrixOrder-1]=D[matrixOrder-1]/A[matrixOrder-1];
+  this -> solution[matrixOrder-1] = D[matrixOrder-1]/A[matrixOrder-1];
   for(int i=matrixOrder-2; i>-1; i--)
   {
     this->solution[i]=(D[i]-B[i]*this->solution[i+1])/A[i];
   }
-  return(this->CampodeTemperaturas);
+
+  //Tentativa implementação tdma do slide
+  // vector<double> P(A.size());
+  // vector<double> Q(A.size());
+  // this -> solution.resize(this ->matrixOrder);
+
+  // P[0]=B[0]/A[0];
+  // Q[0]=D[0]/A[0];
+  // for (int i = 1; i < this -> matrixOrder ; ++i)
+  // {
+  //   P[i] = B[i]/(A[i]-C[i]*P[i-1]);
+  //   Q[i] = (D[i]+C[i]*Q[i-1])/(A[i]-C[i]*P[i-1]);
+  // }
+
+  // this -> solution[matrixOrder - 1] = Q[matrixOrder-1];
+  // for (int i = matrixOrder - 2; i > -1; --i)
+  // {
+  //   this -> solution[i] = P[i]* this -> solution[i+1] + Q[i];
+  // }
+
 }

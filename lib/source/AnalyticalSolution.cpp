@@ -161,7 +161,7 @@ double AnalyticalSolution::evalSecondProblemTemperatureLaw(double position, Doub
 	}
 }
 
-double evalNonLinearTemperatureLaw(double x)
+double AnalyticalSolution::evalNonLinearTemperatureLaw(double x)
 {
 	//the output of this function is expressed in degrees celsius and the input must be in meters.
 	double value;

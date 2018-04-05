@@ -1,35 +1,32 @@
 #include <ConvergenceCriteria.h>
 
-ConvergenceCriteria::ConvergenceCriteria(vector<double> tempField, vector<double> oldTempField, double tol)
+ConvergenceCriteria::ConvergenceCriteria(vector<double> tempField, vector<double> oldTempField)
 {
-	this -> tolerance = tol;
 	this -> errorEveryPosition.resize(tempField.size());
 
 	for (int i = 0; i < tempField.size(); ++i)
 	{
-		this -> errorEveryPosition = abs(tempField[i] - oldTempField[i]);
+		this -> errorEveryPosition[i] = abs(tempField[i] - oldTempField[i]);
 	}
-	double maxError = *max_element(errorsVec.begin(),errorsVec.end());
+	double maxError = *max_element(errorEveryPosition.begin(),errorEveryPosition.end());
 	this -> maximumError = maxError;
 }
 
-ConvergenceCriteria::ConvergenceCriteria(vector<double> tempField, vector<double> oldTempField, double maxTemp, double minTemp, double tol)
+ConvergenceCriteria::ConvergenceCriteria(vector<double> tempField, vector<double> oldTempField, double maxTemp, double minTemp)
 {
-	this -> tolerance = tol;
 	this -> errorEveryPosition.resize(tempField.size());
 
 	double deltaTemperature = maxTemp - minTemp;
 	for (int i = 0; i < tempField.size(); ++i)
 	{
-		this -> errorEveryPosition = (abs(tempField[i] - oldTempField[i]))/deltaTemperature;
+		this -> errorEveryPosition[i] = (abs(tempField[i] - oldTempField[i]))/deltaTemperature;
 	}
-	double maxError = *max_element(errorsVec.begin(),errorsVec.end());
+	double maxError = *max_element(errorEveryPosition.begin(),errorEveryPosition.end());
 	this -> maximumError = maxError;
 }
 
-ConvergenceCriteria::ConvergenceCriteria(vector<double> tempField, vector<double> oldTempField, int numbNod, bool quadratic, double tol)
+ConvergenceCriteria::ConvergenceCriteria(vector<double> tempField, vector<double> oldTempField, int numbNod, bool quadratic)
 {
-	this -> tolerance = tol;
 	
 
 	if(quadratic)
@@ -57,9 +54,8 @@ ConvergenceCriteria::ConvergenceCriteria(vector<double> tempField, vector<double
 
 }
 
-ConvergenceCriteria::ConvergenceCriteria(vector<double> tempField, vector<double> oldTempField, double maxTemp, double minTemp, int, numbNod, double tol)
+ConvergenceCriteria::ConvergenceCriteria(vector<double> tempField, vector<double> oldTempField, double maxTemp, double minTemp, int numbNod)
 {
-	this -> tolerance = tol;
 	
 	double deltaTemperature;
 	double sum = 0.0;
@@ -72,10 +68,10 @@ ConvergenceCriteria::ConvergenceCriteria(vector<double> tempField, vector<double
 	this -> maximumError = sum;
 }
 
-bool ConvergenceCriteria::doesItConverged()
+bool ConvergenceCriteria::doesItConverged(double tol)
 {
-	bool convergence = false
-	if (this -> maximumError <= this -> tolerance)
+	bool convergence = false;
+	if (this -> maximumError <= tol)
 		convergence = true;
 	return convergence;
 }

@@ -9,6 +9,7 @@
 #include <Boundary.h>
 #include <LinearSystem.h>
 #include <ConvergenceCriteria.h>
+#include <algorithm>
 using namespace std;
 using vector_double_2d = vector<vector<double>>;
 
@@ -35,7 +36,7 @@ private:
 	InterfaceOperation interfaceOperation;
 	vector<double> oldTemperatureField;	
 
-	ConvergenceCriteria selectConvergenceCriteria(ConvergenceCriteriaType);
+	// ConvergenceCriteria selectConvergenceCriteria(ConvergenceCriteriaType);
 	void beginProcessor();
 	void endProcessor();
 };
