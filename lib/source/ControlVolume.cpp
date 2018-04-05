@@ -117,7 +117,6 @@ ControlVolume::ControlVolume(PlainWallNonLinearInfo data):
 			errorsVec.push_back((abs(temperatureField[i]-oldTemperatureField[i]))/deltaTemperature);
 		}
 		maximumError = *max_element(errorsVec.begin(),errorsVec.end());
-		cout << "ERROR = " << maximumError << endl;
 		this -> iterationCounter++;
 	}
 }
