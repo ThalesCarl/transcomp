@@ -12,11 +12,13 @@ using namespace std;
 
 int main()
 {
+	PetscInitialize(NULL,NULL,NULL,NULL);
+
 	PlainWallNonLinearInfo info;
 
 	info.numberOfNodes = 5;
 	info.wallLength = 0.1;
-	info.tolerance = 1e-6;
+	info.tolerance = 1e-3;
 	info.gridType = BOTH;
 	info.convergenceCriteriaType = FIRST;
 	info.beginBoundaryConditionType = PRESCRIBED_TEMPERATURE;
@@ -28,13 +30,18 @@ int main()
 	info.thermalConductionCoefficients.push_back(-0.01);
 
 	AnalyticalSolution analytic(info);
+	analytic.writeSolutionToCsv("../results/second_task", "analytic");	
 
-	for (int i = 0; i < info.numberOfNodes; ++i)
-	{
-		info.analyticalSolution.push_back(analytic[i])
-	}
+	ControlVolume controlVolumeEquiv(info);
+	controlVolumeEquiv.writeSolutionToCsv("../results/second_task", "equivalent");
+	cout << "Equivalent counter = " << controlVolumeEquiv.getIterationCounter() << endl;
 
-	ControlVolume controlVolume(info);
+	info.interfaceOperation = LINEAR_INTERPOLATION;
+	ControlVolume controlVolumeLinear(info);
+	controlVolumeLinear.writeSolutionToCsv("../results/second_task", "linear");
+	cout << "Linear Counter = " << controlVolumeLinear.getIterationCounter() << endl;
+
+	PetscFinalize();
 
 		
 }

@@ -62,7 +62,6 @@ struct PlainWallNonLinearInfo
 {
 	int numberOfNodes;
 	std::vector <double> thermalConductionCoefficients;
-	std::vector <double> analyticalSolution;
 	double wallLength;
 	double tolerance;
 	GridType gridType;

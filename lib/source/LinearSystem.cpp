@@ -180,7 +180,7 @@ void LinearSystem::solveTDMA()
   B[0] = this -> matrixOfCoeficients[0][1];
   C[0] = NaN;
   D[0] = this -> independentValues[0];
-  for(int i=1; i < this->matrixOrder-1; i++)
+  for(int i=1; i < this -> matrixOrder - 1; i++)
   {
     A[i] = this -> matrixOfCoeficients[i][i];
     B[i] = this -> matrixOfCoeficients[i][i+1];

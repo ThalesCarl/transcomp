@@ -81,14 +81,12 @@ ControlVolume::ControlVolume(PlainWallNonLinearInfo data):
 		this -> temperatureField[i] = a + ((b-a)*x)/(L);
 	}
 
-	// for (int i = 0; i < n; ++i)
-	// {
-	// 	this -> oldTemperatureField[i]= data.analyticalSolution[i];
-	// }
-
 	
+
+	this -> iterationCounter = 0;
 	double maximumError = 1e6;
-	while(maximumError > data.tolerance)
+	double deltaTemperature = boundaries.getBeginBoundaryCondition() - boundaries.getEndBoundaryCondition();
+	while((maximumError > data.tolerance) && (this -> iterationCounter < 1000))
 	{
 		vectorK.setNonLinearProblem(data.thermalConductionCoefficients, this ->temperatureField);
 
@@ -116,10 +114,11 @@ ControlVolume::ControlVolume(PlainWallNonLinearInfo data):
 		vector<double> errorsVec;
 		for (int i = 0; i < n; ++i)
 		{
-			errorsVec.push_back(abs(temperatureField[i]-oldTemperatureField[i]));
+			errorsVec.push_back((abs(temperatureField[i]-oldTemperatureField[i]))/deltaTemperature);
 		}
-		double maximumError = *max_element(errorsVec.begin(),errorsVec.end());
-
+		maximumError = *max_element(errorsVec.begin(),errorsVec.end());
+		cout << "ERROR = " << maximumError << endl;
+		this -> iterationCounter++;
 	}
 }
 
@@ -275,3 +274,8 @@ double ControlVolume::getPosition(int ControlVolumeIndex)
 	
 // 	return convergence;
 // }
+
+int ControlVolume::getIterationCounter()
+{
+	return this -> iterationCounter;
+}

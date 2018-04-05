@@ -26,6 +26,7 @@ public:
 	void printSolutionOnTheScreen();
 	double getPosition(int controlVolumeIndex);
 	double getTemperature(int controlVolumeIndex);
+	int getIterationCounter();
 
 private:		
 	Mesh mesh;
@@ -35,6 +36,7 @@ private:
 	vector<double> temperatureField;
 	InterfaceOperation interfaceOperation;
 	vector<double> oldTemperatureField;	
+	int iterationCounter;
 
 	// ConvergenceCriteria selectConvergenceCriteria(ConvergenceCriteriaType);
 	void beginProcessor();
