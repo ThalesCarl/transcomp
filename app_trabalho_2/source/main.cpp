@@ -16,7 +16,7 @@ int main()
 	{
 		PlainWallNonLinearInfo info;
 
-		info.numberOfNodes = 4;
+		info.numberOfNodes = 8;
 		info.wallLength = 0.1;
 		info.tolerance = 1e-3;
 		info.gridType = BOTH;
