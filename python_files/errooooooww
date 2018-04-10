@@ -1,0 +1,23 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+"""
+Created on Thu Mar 15 21:34:52 2018
+
+@author: tclavoratti
+"""
+
+import numpy as np
+import matplotlib.pyplot as plt2
+
+data = np.loadtxt('../results/maximum_error.csv',dtype = float, delimiter=',',skiprows=1)
+
+x = data.transpose()[0]
+y = data.transpose()[2]
+
+plt2.plot(x,y,'go',label = "Erro usando interpolação linear")
+plt2.plot(x,y,'g-',label = "Erro usando resistência equivalente")
+plt2.xlabel('x [m]')
+plt2.ylabel('T(x) [°C]')
+plt2.grid(b=1)
+
+plt2.savefig("../results/error_interpolation.png")
