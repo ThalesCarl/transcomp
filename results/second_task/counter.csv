@@ -1,0 +1,7 @@
+numberOfNodes, counter_equivalent_resistance, counter_linear_interpolation
+5, 10, 10
+10, 11, 11
+20, 11, 11
+40, 11, 11
+80, 11, 11
+160, 11, 11

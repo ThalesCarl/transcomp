@@ -71,6 +71,7 @@ struct PlainWallNonLinearInfo
 	std::vector<double> beginBoundaryConditionInfo;
 	std::vector<double> endBoundaryConditionInfo;
 	InterfaceOperation interfaceOperation;
+	bool plotarCurvas;
 };
 
 #endif
