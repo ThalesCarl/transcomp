@@ -17,7 +17,7 @@ class AnalyticalSolution
 public:
 	AnalyticalSolution(PlainWallInfo data);
 	AnalyticalSolution(DoublePlainWallInfo data);
-	// AnalyticalSolution(TransientPlainWallInfo data);
+	AnalyticalSolution(TransientPlainWallInfo data);
 	AnalyticalSolution(PlainWallNonLinearInfo data);
 
 	void writeSolutionToCsv(string directory, string fileName);
@@ -37,8 +37,15 @@ private:
 	
 
 	void addToTemperatureField(int controlVolumeIndex, double value);
-	void getZetaNumbers(double biotNumber, double &zeta);
+	void getZetaNumbers(double biotNumber, double &zetaNumbers);
+
+	double calculateFunction(double x);
+	double calculateDerivate(double x);
+	PetscErrorCode function(SNES snes, Vec x, Vec f, void *ctx);
+	PetscErrorCode dfunction(SNES snes, Vec x, Mat A, Mat B, void* ctx);
+	double solve(double initialGuess);
 	
+			
 };
 
 #endif
