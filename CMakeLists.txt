@@ -92,7 +92,8 @@ add_subdirectory (libTest)
 #add_subdirectory (app_first_exercise)
 #add_subdirectory (app_second_exercise)
 #add_subdirectory (app_trabalho_1)
-add_subdirectory (app_trabalho_2)
+#add_subdirectory (app_trabalho_2)
+add_subdirectory (app_trabalho_3)
 
 
 

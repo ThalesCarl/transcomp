@@ -4,6 +4,7 @@
 #include <iostream>
 #include <vector>
 #include <petscksp.h>
+#include <petscsnes.h>
 using namespace std;
 using vector_double_2d = vector<vector<double>>;
 

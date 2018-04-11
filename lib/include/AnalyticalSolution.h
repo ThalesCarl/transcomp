@@ -9,7 +9,8 @@
 #include <fstream>
 #include <iomanip>
 #include <ThermalConduction.h>
-// #include <biot_solver.h>
+#include <petscksp.h>
+#include <petscsnes.h>
 using namespace std;
 
 class AnalyticalSolution
@@ -38,9 +39,9 @@ private:
 	
 
 	void addToTemperatureField(int controlVolumeIndex, double value);
-	void getZetaNumbers(double biotNumber, double &zetaNumbers);
+	void getZetaNumbers(double biotNumber, vector<double> &zetaNumbers);
 
-	double calculateFunction(double x);
+	double calculateFunction(double x, double biotNumber);
 	double calculateDerivate(double x);
 	PetscErrorCode function(SNES snes, Vec x, Vec f, void *ctx);
 	PetscErrorCode dfunction(SNES snes, Vec x, Mat A, Mat B, void* ctx);

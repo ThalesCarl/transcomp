@@ -37,7 +37,7 @@ AnalyticalSolution::AnalyticalSolution(DoublePlainWallInfo data):
 	}
 }
 
-AnalyticalSolution(TransientPlainWallInfo data):
+AnalyticalSolution::AnalyticalSolution(TransientPlainWallInfo data):
 	mesh(data.numberOfNodes, data.wallLength, data.gridType),
 	vectorK(data.numberOfNodes,data.thermalConduction),
 	boundaries(data.beginBoundaryConditionType, data.endBoundaryConditionType, data.beginBoundaryConditionInfo, data.endBoundaryConditionInfo)
@@ -48,33 +48,34 @@ AnalyticalSolution(TransientPlainWallInfo data):
 		this -> transientTemperatureField[0][i] = data.initialTemperature;
 	}
 	
-	vector<double> zetaNumbers.(20); 
-	getZetaNumbers(data.biotNumber, &zetaNumbers)
+	vector<double> zetaNumbers(20); 
+	getZetaNumbers(data.biotNumber, zetaNumbers);
 	
 	double timePosition = 0;
 	int timeCounter = 0;
 	double Tinf = this -> boundaries.getEndBoundaryCondition();
-	double Tinit = data.initialTemperature
-	double alpha = data.thermalConduction/(data.density*data.cp)
+	double Tinit = data.initialTemperature;
+	double alpha = data.thermalConduction/(data.density*data.cp);
 	double diff = abs(this -> transientTemperatureField[timePosition][0] - Tinf);
 	while (diff > 1)
 	{		
 		double fourierNumber = (alpha*timePosition)/(data.wallLength*data.wallLength);
 		for (int positionCounter = 0; positionCounter < mesh.getNumberOfNodes(); ++positionCounter)
 		{
-			sum = 0;
+			double sum = 0;
 			for (int i = 0; i < zetaNumbers.size(); ++i)
 			{
-				double zeta = zetaNumbers[i]
+				double zeta = zetaNumbers[i];
 				double cn = (4*sin(zeta))/(2*zeta+sin(2*zeta));
 				sum += cn * exp(-zeta*zeta*fourierNumber) * cos(zeta*mesh.centerPoint(positionCounter)/mesh.getWallLength()); 
 			}
-			this -> transientTemperatureField[timeCounter][positionCounter] = Tinf + sum * (Tinit - Tinf) 
+			this -> transientTemperatureField[timeCounter][positionCounter] = Tinf + sum * (Tinit - Tinf);
 		}
 		
 		diff = abs(this -> transientTemperatureField[timeCounter][0] - Tinf);
 		timePosition += data.timeStep;
 	}
+}
 
 AnalyticalSolution::AnalyticalSolution(PlainWallNonLinearInfo data):
 	mesh(data.numberOfNodes, data.wallLength, data.gridType),
@@ -186,12 +187,15 @@ double AnalyticalSolution::evalNonLinearTemperatureLaw(double x)
 	value = 160 - sqrt(3600 +160000 * x);
 }
 
-void AnalyticalSolution::getZetaNumbers(double biotNumber, double &zetaNumbers)
-
-for (int i = 0; i < zetaNumbers.size(); ++i)
+void AnalyticalSolution::getZetaNumbers(double biotNumber, vector<double> &zetaNumbers)
 {
-	zetaNumbers[i] = solve(biotNumber);
+	for (int i = 0; i < zetaNumbers.size(); ++i)
+	{
+		zetaNumbers[i] = solve(biotNumber);
+	}
 }
+
+
 
 double AnalyticalSolution::solve(double initialGuess)
 {
