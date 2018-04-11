@@ -53,19 +53,23 @@ AnalyticalSolution(TransientPlainWallInfo data):
 	
 	double timePosition = 0;
 	int timeCounter = 0;
-	double Tinf = this -> boundaries.getEndBoundaryCondition()
+	double Tinf = this -> boundaries.getEndBoundaryCondition();
+	double Tinit = data.initialTemperature
+	double alpha = data.thermalConduction/(data.density*data.cp)
 	double diff = abs(this -> transientTemperatureField[timePosition][0] - Tinf);
 	while (diff > 1)
-	{
-		double alpha = data.thermalConduction/(data.density*data.cp)
+	{		
 		double fourierNumber = (alpha*timePosition)/(data.wallLength*data.wallLength);
-		sum = 0;
-		for (int i = 0; i < zetaNumbers.size(); ++i)
+		for (int positionCounter = 0; positionCounter < mesh.getNumberOfNodes(); ++positionCounter)
 		{
-			double zeta = zetaNumbers[i]
-			double cn = (4*sin(zeta))/(2*zeta+sin(2*zeta));
-			sum += cn * exp(-zeta*zeta*fourierNumber) * cos(zeta*mesh.centerPoint(i)/mesh.getWallLength());
-			this -> transientTemperatureField[timeCounter][i] = //parei aqui
+			sum = 0;
+			for (int i = 0; i < zetaNumbers.size(); ++i)
+			{
+				double zeta = zetaNumbers[i]
+				double cn = (4*sin(zeta))/(2*zeta+sin(2*zeta));
+				sum += cn * exp(-zeta*zeta*fourierNumber) * cos(zeta*mesh.centerPoint(positionCounter)/mesh.getWallLength()); 
+			}
+			this -> transientTemperatureField[timeCounter][positionCounter] = Tinf + sum * (Tinit - Tinf) 
 		}
 		
 		diff = abs(this -> transientTemperatureField[timeCounter][0] - Tinf);
@@ -102,6 +106,7 @@ void AnalyticalSolution::writeSolutionToCsv(string directory, string fileName)
 		pFile << mesh.centerPoint(i) << ", " << setprecision(20) << temperatureField[i] << endl;
 	}
 }
+
 void AnalyticalSolution::printSolutionOnTheScreen()
 {
 	cout << "Analytical Solution" << endl;
@@ -109,6 +114,19 @@ void AnalyticalSolution::printSolutionOnTheScreen()
 	for (int i = 0; i < this -> mesh.getNumberOfNodes(); i++)
 	{
 		cout << setw(21) << mesh.centerPoint(i) << ", " << setw(24) << this -> temperatureField[i] << endl;
+	}
+}
+
+void AnalyticalSolution::printTransientSolutionOnTheScreen()
+{
+	cout << "Analytical Solution" << endl;
+	//cout << setw(21) << << "Position of the nodes, " << setw(24) << "Temperature of the Nodes" << endl;
+	for (int i = 0; i < this -> mesh.getNumberOfNodes(); i++)
+	{
+		for (int j = 0; j < this -> transientTemperatureField.size(); ++j)
+		{
+			cout << i << ", " << mesh.centerPoint(i) << ", " << setw(24) << this -> transientTemperatureField[i][j] << endl;
+		}
 	}
 }
 

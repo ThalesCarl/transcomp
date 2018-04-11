@@ -22,6 +22,7 @@ public:
 
 	void writeSolutionToCsv(string directory, string fileName);
 	void printSolutionOnTheScreen();
+	void printTransientSolutionOnTheScreen();
 	double operator[](int index);
 
 private:
