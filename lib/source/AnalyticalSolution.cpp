@@ -43,59 +43,37 @@ AnalyticalSolution::AnalyticalSolution(TransientPlainWallInfo data):
 	boundaries(data.beginBoundaryConditionType, data.endBoundaryConditionType, data.beginBoundaryConditionInfo, data.endBoundaryConditionInfo)
 {
 	
-	this -> biotNumber = data.biotNumber;
-	this -> transientTemperatureField.resize(1);
-	this -> transientTemperatureField[0].resize(mesh.getNumberOfNodes());
-	
-	vector<double> zetaNumbers; 
-	zetaNumbers.resize(20);
-	for (int i = 0; i < zetaNumbers.size(); ++i)
+	double Bi = 1.15;
+	vector<double> csi;
+	vector<double> Cn;
+	double crit = 1e-13;
+	int numerodetermos = 10;
+	double k = 0.7;
+	double cp = 700;
+	double L = 0.4;
+	double ro = 2000;
+	double To = 20;
+	double Tinf = 100;
+	double h = Bi*k/L;
+	double DELTAt=1;
+	double alpha;
+	alpha = k/(ro*cp);
+	double wallLength = mesh.getWallLength();
+	double Fo = alpha*DELTAt/pow(wallLength,2);
+	vector<double> Tinicial;
+	vector<double>thetas;
+	thetas.resize(mesh.getNumberOfNodes());
+	vector<double> Tanalit;
+	Tanalit.resize(mesh.getNumberOfNodes());
+		
+	for(int i=0; i<mesh.getNumberOfNodes(); i++)
 	{
-		double initialGuess = (i+1)*3.1415;
-		zetaNumbers[i] = getZetaNumber(initialGuess);
+		Tinicial.push_back(To);
+		thetas[i] = getSolucaoAnalitica(Bi, Fo, mesh.centerPoint(i)/wallLength, crit);
+		Tanalit[i] = thetas[i]*(To-Tinf)+Tinf;
+		cout<<endl<<"theta["<<i<<"]="<<thetas[i]<<"	Tanalit["<<i<<"]="<<Tanalit[i]<<endl;
 	}
-	cout << zetaNumbers[0] << endl;
-
 	
-	double timePosition = 0;
-	int timeCounter = this -> transientTemperatureField.size() - 1;
-	double Tinf = this -> boundaries.getEndBoundaryCondition();
-	double Tinit = data.initialTemperature;
-	double alpha = data.thermalConduction/(data.density*data.cp);
-	double diff = abs(Tinit - Tinf);
-	
-	while (diff > 1)
-	{		
-		
-		double fourierNumber = (alpha*timePosition)/(data.wallLength*data.wallLength);
-		for (int positionCounter = 0; positionCounter < mesh.getNumberOfNodes(); ++positionCounter)
-		{
-			double sum = 0;
-			double sum2 =0;
-			for (int i = 0; i < zetaNumbers.size(); ++i)
-			{
-				double zeta = zetaNumbers[i];
-				double cn = (4*sin(zeta))/(2*zeta+sin(2*zeta));
-				
-				double exponential = (-1) * zeta * zeta * fourierNumber;
-				
-				double thecos = zeta*(mesh.centerPoint(positionCounter)/mesh.getWallLength());
-				
-				sum += cn * exp(exponential) * cos(thecos); 
-				
-			} 
-			
-			this -> transientTemperatureField[timeCounter][positionCounter] = Tinf + sum * (Tinit - Tinf);
-			
-		}
-
-		diff = abs(this -> transientTemperatureField[timeCounter][0] - Tinf);
-		++timeCounter;
-		this -> transientTemperatureField.resize(timeCounter+1);
-		this -> transientTemperatureField[timeCounter].resize(mesh.getNumberOfNodes());
-		timePosition += data.timeStep;
-		
-	}
 }
 
 AnalyticalSolution::AnalyticalSolution(PlainWallNonLinearInfo data):

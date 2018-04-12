@@ -46,12 +46,12 @@ private:
 	double getCn(double csi);
 	double getSolucaoAnalitica(double Bi, double Fo, double xc, double crit);
 
-	// double getZetaNumber(double initialGuess);
-	// double calculateFunction(double x);
-	// double calculateDerivate(double x);
-	// // extern PetscErrorCode function(SNES snes, Vec x, Vec f, void *ctx);
-	// // extern PetscErrorCode dfunction(SNES snes, Vec x, Mat A, Mat B, void* ctx);
-	// double solve(double initialGuess);
+	double getZetaNumber(double initialGuess);
+	double calculateFunction(double x);
+	double calculateDerivate(double x);
+	// extern PetscErrorCode function(SNES snes, Vec x, Vec f, void *ctx);
+	// extern PetscErrorCode dfunction(SNES snes, Vec x, Mat A, Mat B, void* ctx);
+	double solve(double initialGuess);
 	
 			
 };
