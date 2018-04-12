@@ -121,6 +121,65 @@ ControlVolume::ControlVolume(PlainWallNonLinearInfo data):
 	}
 }
 
+ControlVolume::ControlVolume(TransientPlainWallInfo data):
+	mesh(data.numberOfNodes, data.wallLength, data.gridType),
+	vectorK(data.numberOfNodes, data.thermalConduction),
+	boundaries(data.beginBoundaryConditionType, data.endBoundaryConditionType, data.beginBoundaryConditionInfo, data.endBoundaryConditionInfo), 
+	solver(data.numberOfNodes),
+	interfaceOperation(data.interfaceOperation)
+{
+	int n = this -> mesh.getNumberOfNodes();
+	this -> temperatureField.resize(n);
+	this -> oldTemperatureField.resize(n);
+	this -> transientTemperatureField.resize(1000);
+	for (int i = 0; i < oldTemperatureField.size(); ++i)
+	{
+		this -> oldTemperatureField[i] = data.initialTemperature;
+	}
+
+	double diff = abs(oldTemperatureField[0] - this -> boundaries.getEndBoundaryCondition());
+
+	int count = 0;
+	while ((diff>1e-3)&&(count < 8))
+	{
+		beginProcessorTransient(data);
+		for (int i = 1; i < n - 1; i++)
+		{
+			double ro = data.density;
+			double cp = data.cp;
+			double area = data.transversalArea;
+			double deltaX = mesh.getDelta();
+			cout << deltaX << endl;
+			double deltaT = data.timeStep;
+			
+			double aw = vectorK.getWestInterface(mesh,i, this -> interfaceOperation)/this -> mesh.westDistance(i);
+			double ae = this -> vectorK.getEastInterface(this -> mesh, 0, interfaceOperation)/mesh.eastDistance(0);
+			double ap0 = (ro*cp*area*deltaX)/deltaT;
+			cout << aw << ", " << ae << ", " << ap0 << endl;
+			solver.setValueToMatrix(i,i,ap0);
+			double tE0 = this -> oldTemperatureField[i+1];
+			double tW0 = this -> oldTemperatureField[i-1];
+			double tP0 = this -> oldTemperatureField[0];
+			solver.setValueToVector(i,ae*tE0 + aw*tW0 + tP0*(ap0 - ae - aw));	
+		}
+		endProcessorTransient(data);
+		
+		this -> solver.solve();
+
+
+		for (int i = 0; i < n; i++)
+		{
+			this -> oldTemperatureField[i] = this -> temperatureField[i];
+			this -> temperatureField[i] = this -> solver[i];
+		}
+		
+		diff = abs(temperatureField[0] - this -> boundaries.getEndBoundaryCondition());
+		++count;
+		cout << "count = " << count << ", oidfnasdf = " << this -> temperatureField[0] << endl;
+	}
+	
+	
+}
 
 
 void ControlVolume::writeSolutionToCsv(string directory, string fileName)
@@ -258,6 +317,62 @@ void ControlVolume::endProcessor()
 		solver.setValueToVector(n-1,this -> boundaries.getEndBoundaryCondition()/R);
 	}	
 }
+
+void ControlVolume::beginProcessorTransient(TransientPlainWallInfo data)
+{
+	FrontierType beginFrontierType = this -> mesh.getBeginFrontierType();
+	BoundaryCondition beginBoundaryConditionType = this -> boundaries.getTypeBegin();
+
+	if((beginFrontierType == CONNECTED)&&(beginBoundaryConditionType == PRESCRIBED_FLUX))
+	{
+		double q = this -> boundaries.getBeginBoundaryCondition();
+		double ro = data.density;
+		double cp = data.cp;
+		double area = data.transversalArea;
+		double deltaX = 0.5 * mesh.getDeltaBegin();
+		double deltaT = data.timeStep;		
+		double ke = this -> vectorK.getEastInterface(this -> mesh, 0, interfaceOperation);
+		double dxe = mesh.eastDistance(0);
+		double ae = area * ke/dxe;
+		double ap0 = (ro*cp*area*deltaX)/deltaT;
+		solver.setValueToMatrix(0,0,ap0);
+		double tE0 = this -> oldTemperatureField[1];
+		double tP0 = this -> oldTemperatureField[0];
+
+		// double aux = ae*tE0+tP0*(ap0 - ae)-q;
+		// cout << aux << endl;
+
+		this -> solver.setValueToVector(0,ae*tE0+tP0*(ap0 - ae)-q);
+	}
+
+	//eventualmente implementar as outras possibilidades, or not.
+}
+
+void ControlVolume::endProcessorTransient(TransientPlainWallInfo data)
+{
+	int n = this -> mesh.getNumberOfNodes();
+	FrontierType endFrontierType = this -> mesh.getEndFrontierType();
+	BoundaryCondition endBoundaryConditionType = this -> boundaries.getTypeEnd();
+
+	if((endFrontierType == CONNECTED)&&(endBoundaryConditionType == CONVECTION))
+	{
+		double q = this -> boundaries.getBeginBoundaryCondition();
+		double ro = data.density;
+		double cp = data.cp;
+		double area = data.transversalArea;
+		double deltaX = 0.5*mesh.getDeltaEnd();
+		double deltaT = data.timeStep;
+		
+		double aw = area * this -> vectorK.getWestInterface(this -> mesh, n-1, interfaceOperation)/mesh.westDistance(n-1);
+		double ap0 = (ro*cp*area*deltaX)/deltaT;
+		solver.setValueToMatrix(n-1,n-1,ap0);
+		double tW0 = this -> oldTemperatureField[n-2];
+		double tP0 = this -> oldTemperatureField[n-1];
+		double h = boundaries.getEndConvectionCoeficient();
+		double tInf = boundaries.getEndBoundaryCondition();
+		solver.setValueToVector(n-1,aw*tW0 -tInf*h*area + tP0*(h*area + ap0 - aw));
+	}
+}
 double ControlVolume::getTemperature(int ControlVolumeIndex)
 {
 	return this -> temperatureField[ControlVolumeIndex];
@@ -268,13 +383,10 @@ double ControlVolume::getPosition(int ControlVolumeIndex)
 	return this -> mesh.centerPoint(ControlVolumeIndex);
 }
 
-// ConvergenceCriteria ControlVolume::selectConvergenceCriteria(ConvergenceCriteriaType type)
-// {
-	
-// 	return convergence;
-// }
 
 int ControlVolume::getIterationCounter()
 {
 	return this -> iterationCounter;
 }
+
+

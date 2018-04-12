@@ -20,6 +20,7 @@ public:
 	ControlVolume(PlainWallInfo data);
 	ControlVolume(DoublePlainWallInfo data);
 	ControlVolume(PlainWallNonLinearInfo data);
+	ControlVolume(TransientPlainWallInfo data);
 
 	//get functions
 	void writeSolutionToCsv(string directory, string fileName);
@@ -36,9 +37,12 @@ private:
 	vector<double> temperatureField;
 	InterfaceOperation interfaceOperation;
 	vector<double> oldTemperatureField;	
+	vector<vector<double>> transientTemperatureField;
 	int iterationCounter;
 
 	// ConvergenceCriteria selectConvergenceCriteria(ConvergenceCriteriaType);
 	void beginProcessor();
 	void endProcessor();
+	void beginProcessorTransient(TransientPlainWallInfo data);
+	void endProcessorTransient(TransientPlainWallInfo data);
 };

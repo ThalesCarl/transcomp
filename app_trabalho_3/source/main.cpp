@@ -13,6 +13,7 @@ using namespace std;
 int main()
 {
 	
+	PetscInitialize(NULL,NULL,NULL,NULL);
 	TransientPlainWallInfo info;
 
 	info.numberOfNodes = 7;
@@ -22,20 +23,21 @@ int main()
 	info.density = 2000;
 	info.cp = 700;
 	info.biotNumber = 2.05;
-	info.timeStep = 10000;
+	info.timeStep = 800;
 	info.initialTemperature = 20;
+	info.transversalArea = 1;
 	info.beginBoundaryConditionType = PRESCRIBED_FLUX;
 	info.endBoundaryConditionType = CONVECTION;
 	info.beginBoundaryConditionInfo.push_back(0);
 	info.endBoundaryConditionInfo.push_back(3.5875);
 	info.endBoundaryConditionInfo.push_back(100);
-
-	
+	info.interfaceOperation = EQUIVALENT_RESISTANCE;
 
 	AnalyticalSolution analyt(info);
-	//analyt.printTransientSolutionOnTheScreen();
+
+	ControlVolume control(info);
 		
-	
+	PetscFinalize();
 
 		
 }

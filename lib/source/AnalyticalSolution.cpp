@@ -55,7 +55,7 @@ AnalyticalSolution::AnalyticalSolution(TransientPlainWallInfo data):
 	double To = 20;
 	double Tinf = 100;
 	double h = Bi*k/L;
-	double DELTAt=1;
+	double DELTAt=data.timeStep;
 	double alpha;
 	alpha = k/(ro*cp);
 	double wallLength = mesh.getWallLength();

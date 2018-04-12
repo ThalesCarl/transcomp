@@ -344,3 +344,35 @@ void Mesh::eastTypeGridAdder(int numOfNod, double wallLen)
 	this -> wallLength = sum;
 }
 
+double Mesh::getDeltaBegin()
+{
+	return centerPoint(1) - centerPoint(0);
+}
+double Mesh::getDelta()
+{
+	int n = getNumberOfNodes();
+	if(n>3)
+	{
+		return centerPoint(n-1) - centerPoint(n - 2);
+	}
+	else 
+	{
+		cout << "Error mesh" << endl;
+		return -200000;
+	}
+		
+}
+double Mesh::getDeltaEnd()
+{
+	int n = getNumberOfNodes();
+	if(n>2)
+	{
+		return centerPoint(n) - centerPoint(n-1);
+	}
+	else
+	{
+		cout << "Error mesh" << endl;
+		return -20000;
+	}
+}
+

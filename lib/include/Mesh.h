@@ -25,6 +25,10 @@ public:
 	double westDistance(int controlVolumeIndex);
 	double westPlusDistance(int controlVolumeIndex);
 	double westMinusDistance(int controlVolumeIndex);
+	double getDeltaBegin();
+	double getDelta();
+	double getDeltaEnd();
+
 	
 	int getNumberOfNodes();
 	double getWallLength();
