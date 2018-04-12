@@ -88,7 +88,7 @@ endmacro ()
 ##################################################################
 #add_subdirectory (UtilsLib)
 add_subdirectory (lib)
-add_subdirectory (libTest)
+#add_subdirectory (libTest)
 #add_subdirectory (app_first_exercise)
 #add_subdirectory (app_second_exercise)
 #add_subdirectory (app_trabalho_1)

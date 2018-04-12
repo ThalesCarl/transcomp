@@ -9,8 +9,8 @@
 #include <fstream>
 #include <iomanip>
 #include <ThermalConduction.h>
-#include <petscksp.h>
-#include <petscsnes.h>
+// #include <petscksp.h>
+// #include <petscsnes.h>
 using namespace std;
 
 class AnalyticalSolution
@@ -33,19 +33,25 @@ private:
 	Mesh mesh;
 	Boundary boundaries;
 	ThermalConduction vectorK;
+	double biotNumber;
+
 	double evalFirstProblemTemperatureLaw(double position);
 	double evalSecondProblemTemperatureLaw(double position, DoublePlainWallInfo data);
 	double evalNonLinearTemperatureLaw(double position);
 	
 
 	void addToTemperatureField(int controlVolumeIndex, double value);
-	void getZetaNumbers(double biotNumber, vector<double> &zetaNumbers);
+	
+	double getcsi(double Bi, double xo, double crit);
+	double getCn(double csi);
+	double getSolucaoAnalitica(double Bi, double Fo, double xc, double crit);
 
-	double calculateFunction(double x, double biotNumber);
-	double calculateDerivate(double x);
-	PetscErrorCode function(SNES snes, Vec x, Vec f, void *ctx);
-	PetscErrorCode dfunction(SNES snes, Vec x, Mat A, Mat B, void* ctx);
-	double solve(double initialGuess);
+	// double getZetaNumber(double initialGuess);
+	// double calculateFunction(double x);
+	// double calculateDerivate(double x);
+	// // extern PetscErrorCode function(SNES snes, Vec x, Vec f, void *ctx);
+	// // extern PetscErrorCode dfunction(SNES snes, Vec x, Mat A, Mat B, void* ctx);
+	// double solve(double initialGuess);
 	
 			
 };

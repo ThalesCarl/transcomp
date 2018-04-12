@@ -12,10 +12,11 @@ using namespace std;
 
 int main()
 {
-	PetscInitialize(NULL,NULL,NULL,NULL);
+	
 	TransientPlainWallInfo info;
 
 	info.numberOfNodes = 7;
+	info.gridType = BOTH;
 	info.wallLength = 0.4;
 	info.thermalConduction = 0.7;
 	info.density = 2000;
@@ -29,10 +30,12 @@ int main()
 	info.endBoundaryConditionInfo.push_back(3.5875);
 	info.endBoundaryConditionInfo.push_back(100);
 
+	
+
 	AnalyticalSolution analyt(info);
-	analyt.printTransientInfoOnTheScreen();
+	//analyt.printTransientSolutionOnTheScreen();
 		
-	PetscFinalize();
+	
 
 		
 }

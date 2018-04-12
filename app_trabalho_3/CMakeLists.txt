@@ -1,5 +1,5 @@
 # Project name
-project (app_trabalho_2)
+project (app_trabalho_3)
 
 # Add a directory to teh list of directories where to look for header files
 include_directories (${CMAKE_SOURCE_DIR}/lib/include)

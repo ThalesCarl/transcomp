@@ -42,38 +42,59 @@ AnalyticalSolution::AnalyticalSolution(TransientPlainWallInfo data):
 	vectorK(data.numberOfNodes,data.thermalConduction),
 	boundaries(data.beginBoundaryConditionType, data.endBoundaryConditionType, data.beginBoundaryConditionInfo, data.endBoundaryConditionInfo)
 {
-	this -> transientTemperatureField[0].resize(mesh.getNumberOfNodes());
-	for (int i = 0; i < mesh.getNumberOfNodes(); ++i)
-	{
-		this -> transientTemperatureField[0][i] = data.initialTemperature;
-	}
 	
-	vector<double> zetaNumbers(20); 
-	getZetaNumbers(data.biotNumber, zetaNumbers);
+	this -> biotNumber = data.biotNumber;
+	this -> transientTemperatureField.resize(1);
+	this -> transientTemperatureField[0].resize(mesh.getNumberOfNodes());
+	
+	vector<double> zetaNumbers; 
+	zetaNumbers.resize(20);
+	for (int i = 0; i < zetaNumbers.size(); ++i)
+	{
+		double initialGuess = (i+1)*3.1415;
+		zetaNumbers[i] = getZetaNumber(initialGuess);
+	}
+	cout << zetaNumbers[0] << endl;
+
 	
 	double timePosition = 0;
-	int timeCounter = 0;
+	int timeCounter = this -> transientTemperatureField.size() - 1;
 	double Tinf = this -> boundaries.getEndBoundaryCondition();
 	double Tinit = data.initialTemperature;
 	double alpha = data.thermalConduction/(data.density*data.cp);
-	double diff = abs(this -> transientTemperatureField[timePosition][0] - Tinf);
+	double diff = abs(Tinit - Tinf);
+	
 	while (diff > 1)
 	{		
+		
 		double fourierNumber = (alpha*timePosition)/(data.wallLength*data.wallLength);
 		for (int positionCounter = 0; positionCounter < mesh.getNumberOfNodes(); ++positionCounter)
 		{
 			double sum = 0;
+			double sum2 =0;
 			for (int i = 0; i < zetaNumbers.size(); ++i)
 			{
 				double zeta = zetaNumbers[i];
 				double cn = (4*sin(zeta))/(2*zeta+sin(2*zeta));
-				sum += cn * exp(-zeta*zeta*fourierNumber) * cos(zeta*mesh.centerPoint(positionCounter)/mesh.getWallLength()); 
-			}
+				
+				double exponential = (-1) * zeta * zeta * fourierNumber;
+				
+				double thecos = zeta*(mesh.centerPoint(positionCounter)/mesh.getWallLength());
+				
+				sum += cn * exp(exponential) * cos(thecos); 
+				
+			} 
+			
 			this -> transientTemperatureField[timeCounter][positionCounter] = Tinf + sum * (Tinit - Tinf);
+			
 		}
-		
+
 		diff = abs(this -> transientTemperatureField[timeCounter][0] - Tinf);
+		++timeCounter;
+		this -> transientTemperatureField.resize(timeCounter+1);
+		this -> transientTemperatureField[timeCounter].resize(mesh.getNumberOfNodes());
 		timePosition += data.timeStep;
+		
 	}
 }
 
@@ -122,11 +143,11 @@ void AnalyticalSolution::printTransientSolutionOnTheScreen()
 {
 	cout << "Analytical Solution" << endl;
 	//cout << setw(21) << << "Position of the nodes, " << setw(24) << "Temperature of the Nodes" << endl;
-	for (int i = 0; i < this -> mesh.getNumberOfNodes(); i++)
+	for (int i = 0; i < this -> transientTemperatureField[0].size(); i++)
 	{
 		for (int j = 0; j < this -> transientTemperatureField.size(); ++j)
 		{
-			cout << i << ", " << mesh.centerPoint(i) << ", " << setw(24) << this -> transientTemperatureField[i][j] << endl;
+			cout << i << ", " << mesh.centerPoint(j) << ", " << setw(24) << this -> transientTemperatureField[i][j] << endl;
 		}
 	}
 }
@@ -187,73 +208,30 @@ double AnalyticalSolution::evalNonLinearTemperatureLaw(double x)
 	value = 160 - sqrt(3600 +160000 * x);
 }
 
-void AnalyticalSolution::getZetaNumbers(double biotNumber, vector<double> &zetaNumbers)
+double AnalyticalSolution::getZetaNumber(double initialGuess)
 {
-	for (int i = 0; i < zetaNumbers.size(); ++i)
+	double xi = initialGuess;
+	double diff = 1000;
+	int count = 0;
+	double x = 0;
+	while((diff>1e-3)&& (count < 100))
 	{
-		zetaNumbers[i] = solve(biotNumber);
+		double aux = calculateFunction(xi)/calculateDerivate(xi);
+		x = xi - aux;
+		diff =abs(aux);
+		xi = x;
+		count++;
 	}
+	return x;
 }
 
 
 
-double AnalyticalSolution::solve(double initialGuess)
+
+
+double AnalyticalSolution::calculateFunction(double x)
 {
-	PetscErrorCode err;
-	const PetscInt size = 1;
-
-	Vec			y, x;
-	Mat 		jacobian;
-	SNES		snes;
-
-	PetscInt solutionIndices[]={0};
-	PetscScalar solution[1];
-
-	/* Initial guess and solution vector */
-	err = VecCreate(PETSC_COMM_WORLD, &x); CHKERRQ(err);
-	err = PetscObjectSetName((PetscObject) x, "solution"); CHKERRQ(err);
-	err = VecSetSizes(x, PETSC_DECIDE, size); CHKERRQ(err);
-	err = VecSetFromOptions(x); CHKERRQ(err);
-	err = VecDuplicate(x, &y); CHKERRQ(err);
-	/* Initial guess */
-	err = VecSet(x, (PetscScalar)initialGuess); CHKERRQ(err);
-	err = PetscObjectSetName((PetscObject) y, "error"); CHKERRQ(err);
-
-	/* Jacobian matrix */
-	err = MatCreate(PETSC_COMM_WORLD, &jacobian); CHKERRQ(err);
-	err = MatSetSizes(jacobian, PETSC_DECIDE, PETSC_DECIDE, 1, 1); CHKERRQ(err);
-	err = MatSetFromOptions(jacobian); CHKERRQ(err);
-	err = MatSetUp(jacobian); CHKERRQ(err);
-
-	/* Create SNES context */
-	err = SNESCreate(PETSC_COMM_WORLD, &snes); CHKERRQ(err);
-	err = SNESSetFunction(snes, y, function, NULL); CHKERRQ(err);
-	err = SNESSetJacobian(snes, jacobian, jacobian, dfunction, NULL); CHKERRQ(err);
-	err = SNESSetFromOptions(snes); CHKERRQ(err);
-	
-	/* solve */
-	err = SNESSolve(snes, NULL, x); CHKERRQ(err);
-
-	/* Get solution */
-	err = VecGetValues(x, size, solutionIndices, solution);
-
-	/* Show solution */
-	/*err = VecView(x, PETSC_VIEWER_STDOUT_WORLD);*/
-	/*function(snes, x, y, NULL);*/
-	/*err = VecView(y, PETSC_VIEWER_STDOUT_WORLD);*/
-
-	/* Finalize */
-	err = MatDestroy(&jacobian); CHKERRQ(err);
-	err = VecDestroy(&x); CHKERRQ(err);
-	err = VecDestroy(&y); CHKERRQ(err);
-	err = SNESDestroy(&snes); CHKERRQ(err);
-
-	return solution[0];
-}
-
-double AnalyticalSolution::calculateFunction(double x, double biotNumber)
-{
-	return x*tan(x) - biotNumber;
+	return x*tan(x) - 2.05;
 }
 
 double AnalyticalSolution::calculateDerivate(double x)
@@ -261,44 +239,48 @@ double AnalyticalSolution::calculateDerivate(double x)
 	double sec, secSquare;
 	sec = 1 / cos(x);
 	secSquare = sec*sec;
-	return tan(x) + x/secSquare;
+	return tan(x) + x*secSquare;
 }
 
-PetscErrorCode AnalyticalSolution::function(SNES snes, Vec x, Vec f, void *ctx)
+double AnalyticalSolution::getcsi(double Bi, double xo, double crit)
 {
-	PetscErrorCode err;
-	const PetscScalar *xx;
-	PetscScalar *ff;
-
-	err = VecGetArrayRead(x, &xx); CHKERRQ(err);
-	err = VecGetArray(f, &ff); CHKERRQ(err);
-
-	ff[0] = (PetscScalar) calculateFunction((double) xx[0]);
-
-	err = VecRestoreArrayRead(x, &xx); CHKERRQ(err);
-	err = VecRestoreArray(f, &ff); CHKERRQ(err);
-	
-	return 0;
+	double x;
+	int cont = 0;
+	int iteracaomaxima=100;
+	double erro = 1;
+	while(crit<erro && iteracaomaxima>cont)
+	{
+		cont++;
+		x = xo-(Bi-xo*tan(xo))/(-(tan(xo)+xo*pow(1/cos(xo),2)));
+		erro = fabs(x - xo);
+		xo = x;
+	}
+	return (x);
 }
-
-PetscErrorCode AnalyticalSolution::dfunction(SNES snes, Vec x, Mat jacobian, Mat B, void* ctx)
+double AnalyticalSolution::getCn(double csi)
 {
-	PetscErrorCode err;
-	const PetscInt size=1;
-	const PetscInt rowEntry[]={0}, columnEntry[]={0};
-	const PetscScalar *xx;
-	PetscScalar df[1], sec, secSquare;
-
-	err = VecGetArrayRead(x, &xx); CHKERRQ(err);
-
-	sec = 1 / PetscCosReal(xx[0]);
-	secSquare = sec*sec;
-	df[0] = (PetscScalar) calculateDerivate((double) xx[0]);
-
-	err = MatSetValues(jacobian, size, rowEntry, size, columnEntry, df, INSERT_VALUES); CHKERRQ(err);
-	err = MatAssemblyBegin(jacobian, MAT_FINAL_ASSEMBLY); CHKERRQ(err);
-	err = MatAssemblyEnd(jacobian, MAT_FINAL_ASSEMBLY); CHKERRQ(err);
-
-	err = VecRestoreArrayRead(x, &xx); CHKERRQ(err);
-	return 0;
+	double Cn=(4*sin(csi)/(2*csi+sin(2*csi)));
+	return(Cn);
+}
+double AnalyticalSolution::getSolucaoAnalitica(double Bi, double Fo, double xc, double crit)
+{
+	double pi = 3.14159265359;
+	double theta = 0;
+	int cont = 0;
+	int iteracaomaxima=100;
+	double soma = crit+1;
+	double xo=1;
+	double Cn;
+	double csi;
+	while((crit<soma || soma<-crit) && iteracaomaxima>cont)
+	{
+		csi = getcsi(Bi, xo, crit);
+		Cn = getCn(csi);
+		soma = Cn*exp(-(pow(csi,2)*Fo))*cos(csi*xc);
+		//cout<<endl<<endl<<"	"<<soma<<"	"<<cont<<endl<<endl;
+		theta = theta + soma;
+		cont ++;
+		xo = cont*pi;
+	}
+	return (theta);
 }
