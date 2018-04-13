@@ -74,7 +74,7 @@ void LinearSystem::solve()
     VecAssemblyBegin(b);
     VecAssemblyEnd(b);
 
-    MatView(A,PETSC_VIEWER_STDOUT_WORLD);
+    // MatView(A,PETSC_VIEWER_STDOUT_WORLD);
     // VecView(b,PETSC_VIEWER_STDOUT_WORLD);
     // VecView(x,PETSC_VIEWER_STDOUT_WORLD);
 

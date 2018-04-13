@@ -43,6 +43,6 @@ private:
 	// ConvergenceCriteria selectConvergenceCriteria(ConvergenceCriteriaType);
 	void beginProcessor();
 	void endProcessor();
-	void beginProcessorTransient(TransientPlainWallInfo data);
-	void endProcessorTransient(TransientPlainWallInfo data);
+	void beginProcessorTransient(TransientPlainWallInfo data, double deltaTfromTheBeginning);
+	void endProcessorTransient(TransientPlainWallInfo data, double deltaTfromTheBeginning);
 };

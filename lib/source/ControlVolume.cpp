@@ -141,16 +141,17 @@ ControlVolume::ControlVolume(TransientPlainWallInfo data):
 	double diff = abs(oldTemperatureField[0] - this -> boundaries.getEndBoundaryCondition());
 
 	int count = 0;
-	while ((diff>1e-3)&&(count < 2))
+	double deltaT = data.timeStep;
+	while ((diff>1e-3)&&(count < 10))
 	{
-		beginProcessorTransient(data);
+		
+		beginProcessorTransient(data,deltaT);
 		for (int i = 1; i < n - 1; i++)
 		{
 			double ro = data.density;
 			double cp = data.cp;
 			double area = data.transversalArea;
-			double deltaX = mesh.getDelta();
-			double deltaT = data.timeStep;			
+			double deltaX = mesh.getDelta();				
 			double aw = vectorK.getWestInterface(mesh,i, this -> interfaceOperation)/this -> mesh.westDistance(i);
 			double ae = this -> vectorK.getEastInterface(this -> mesh, i, interfaceOperation)/mesh.eastDistance(i);
 			double ap0 = (ro*cp*area*deltaX)/deltaT;
@@ -162,20 +163,19 @@ ControlVolume::ControlVolume(TransientPlainWallInfo data):
 			double aux = ae*tE0 + aw*tW0 + tP0*(ap0 - ae - aw);
 			solver.setValueToVector(i,ae*tE0 + aw*tW0 + tP0*(ap0 - ae - aw));	
 		}
-		endProcessorTransient(data);
+		endProcessorTransient(data,deltaT);
 		
 		this -> solver.solve();
 
 
 		for (int i = 0; i < n; i++)
 		{
-			this -> oldTemperatureField = this -> temperatureField[i];
+			this -> oldTemperatureField[i] = this -> temperatureField[i];
 			this -> temperatureField[i] = solver[i];
+			cout << temperatureField[i] << endl;
 		}
-		
 		diff = abs(temperatureField[0] - this -> boundaries.getEndBoundaryCondition());
 		++count;
-		
 	}
 	
 	
@@ -318,7 +318,7 @@ void ControlVolume::endProcessor()
 	}	
 }
 
-void ControlVolume::beginProcessorTransient(TransientPlainWallInfo data)
+void ControlVolume::beginProcessorTransient(TransientPlainWallInfo data, double deltaT)
 {
 	FrontierType beginFrontierType = this -> mesh.getBeginFrontierType();
 	BoundaryCondition beginBoundaryConditionType = this -> boundaries.getTypeBegin();
@@ -330,7 +330,6 @@ void ControlVolume::beginProcessorTransient(TransientPlainWallInfo data)
 		double cp = data.cp;
 		double area = data.transversalArea;
 		double deltaX = 0.5 * mesh.getDeltaBegin();
-		double deltaT = data.timeStep;		
 		double ke = this -> vectorK.getEastInterface(this -> mesh, 0, interfaceOperation);
 		double dxe = mesh.eastDistance(0);
 		double ae = area * ke/dxe;
@@ -345,7 +344,7 @@ void ControlVolume::beginProcessorTransient(TransientPlainWallInfo data)
 	//eventualmente implementar as outras possibilidades, or not.
 }
 
-void ControlVolume::endProcessorTransient(TransientPlainWallInfo data)
+void ControlVolume::endProcessorTransient(TransientPlainWallInfo data, double deltaT)
 {
 	int n = this -> mesh.getNumberOfNodes();
 	FrontierType endFrontierType = this -> mesh.getEndFrontierType();
@@ -357,7 +356,6 @@ void ControlVolume::endProcessorTransient(TransientPlainWallInfo data)
 		double cp = data.cp;
 		double area = data.transversalArea;
 		double deltaX = 0.5*mesh.getDeltaBegin();
-		double deltaT = data.timeStep;
 		
 		double aw = area * this -> vectorK.getWestInterface(this -> mesh, n-1, interfaceOperation)/mesh.westDistance(n-1);
 		double ap0 = (ro*cp*area*deltaX)/deltaT;
