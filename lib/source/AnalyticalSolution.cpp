@@ -68,13 +68,23 @@ AnalyticalSolution::AnalyticalSolution(TransientPlainWallInfo data):
 
 	ofstream pFile;
 	pFile.open("../results/third_task/analytical_solution.csv");
+
+	for (int i = 0; i < mesh.getNumberOfNodes(); ++i)
+	{
+		pFile << mesh.centerPoint(i);
+		if(i!=mesh.getNumberOfNodes()-1)
+			pFile << ", ";
+		else		
+			pFile << endl;
+	}
 		
-	for(int i = 0; i < 925; i++)
+	for(int i = 0; i < 872; i++)
 	{
 		DELTAt += data.timeStep;
+		pFile << DELTAt << ", " << endl;
 		
 		double Fo = alpha*DELTAt/pow(wallLength,2);
-		if (i%75 == 0)
+		if (i%100 == 0)
 		{
 			for(int j=0; j<mesh.getNumberOfNodes(); j++)
 			{
@@ -82,9 +92,12 @@ AnalyticalSolution::AnalyticalSolution(TransientPlainWallInfo data):
 				thetas[j] = getSolucaoAnalitica(Bi, Fo, mesh.centerPoint(j)/wallLength, crit);
 				
 				Tanalit[j] = thetas[j]*(To-Tinf)+Tinf;
-				pFile << Tanalit[j] << ", ";
+				pFile << Tanalit[j];
+				if(j!=mesh.getNumberOfNodes()-1)
+					pFile << ", ";
+				else		
+					pFile << endl;
 			}
-			pFile << endl;
 		}
 		
 	}

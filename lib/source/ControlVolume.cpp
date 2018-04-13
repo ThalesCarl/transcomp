@@ -144,21 +144,33 @@ ControlVolume::ControlVolume(TransientPlainWallInfo data):
 	double deltaT = data.timeStep;
 	ofstream pFile;
 	pFile.open("../results/third_task/controlVolume.csv");
-	pFile << "nodesPosition, " << "nodesTemperature" << endl;
+	
 	pFile << fixed;
-	while ((diff>1)&&(count < 1000))
+	for (int i = 0; i < mesh.getNumberOfNodes(); ++i)
 	{
-		
+		pFile << mesh.centerPoint(i);
+		if(i!=mesh.getNumberOfNodes()-1)
+			pFile << ", ";
+		else		
+			pFile << endl;
+	}
+	double timePosition = 0;
+	while ((diff>5)&&(count < 10000))
+	{
+		timePosition += deltaT;
+		pFile << timePosition << ", ";
 		beginProcessorTransient(data,deltaT);
 		for (int i = 1; i < n - 1; i++)
 		{
 			double ro = data.density;
 			double cp = data.cp;
 			double area = data.transversalArea;
-			double deltaX = mesh.getDelta();				
+			double deltaX = mesh.getDelta();			
 			double aw = vectorK.getWestInterface(mesh,i, this -> interfaceOperation)/this -> mesh.westDistance(i);
-			double ae = this -> vectorK.getEastInterface(this -> mesh, i, interfaceOperation)/mesh.eastDistance(i);
+			double ae = vectorK.getEastInterface(mesh,i,this -> interfaceOperation)/this -> mesh.eastDistance(i);
 			double ap0 = (ro*cp*area*deltaX)/deltaT;
+			
+
 
 			solver.setValueToMatrix(i,i,ap0);
 			double tE0 = this -> oldTemperatureField[i+1];
@@ -176,16 +188,22 @@ ControlVolume::ControlVolume(TransientPlainWallInfo data):
 		{
 			this -> oldTemperatureField[i] = this -> temperatureField[i];
 			this -> temperatureField[i] = solver[i];
-		}		
-		if (count%75 == 0)
+			// cout << this -> temperatureField[i] << endl;
+		}
+		cout << "opa" << count << endl;
+		if (count%100 == 0)
 		{
 			for (int i = 0; i < temperatureField.size(); ++i)
 			{
-				pFile << temperatureField[i] << ", ";
+				pFile << temperatureField[i];
+				if(i!=temperatureField.size()-1)
+					pFile << ", ";
+				else		
+					pFile << endl;	
 			}
-			pFile << endl;
-
 		}
+
+		
 		
 		diff = abs(temperatureField[0] - this -> boundaries.getEndBoundaryCondition());
 
@@ -365,7 +383,6 @@ void ControlVolume::endProcessorTransient(TransientPlainWallInfo data, double de
 	int n = this -> mesh.getNumberOfNodes();
 	FrontierType endFrontierType = this -> mesh.getEndFrontierType();
 	BoundaryCondition endBoundaryConditionType = this -> boundaries.getTypeEnd();
-
 	if((endFrontierType == CONNECTED)&&(endBoundaryConditionType == CONVECTION))
 	{
 		double ro = data.density;

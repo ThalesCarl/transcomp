@@ -211,11 +211,11 @@ FrontierType Mesh::getBeginFrontierType()
 	try
 	{
 		
-		if(this -> positionOfNodes[0] == this -> positionSurfaceOfElements[0])
+		if(abs(this -> positionOfNodes[0] - this -> positionSurfaceOfElements[0]) < 1e-9)
 		{
 			beginFrontierType = CONNECTED;
 		} 
-		else if (this -> positionOfNodes[0] != this -> positionSurfaceOfElements[0])
+		else if (abs(this -> positionOfNodes[0] - this -> positionSurfaceOfElements[0]) > 1e-9)
 		{
 			beginFrontierType = UNCONNECTED;
 		}
@@ -239,11 +239,11 @@ FrontierType Mesh::getEndFrontierType()
 	try
 	{
 		
-		if(this -> positionOfNodes[n-1] == this -> positionSurfaceOfElements[n])
+		if(abs(this -> positionOfNodes[n-1] - this -> positionSurfaceOfElements[n]) < 1e-9)
 		{
 			endFrontierType = CONNECTED;
 		} 
-		else if (this -> positionOfNodes[n-1] != this -> positionSurfaceOfElements[n])
+		else if (abs(this -> positionOfNodes[n] - this -> positionSurfaceOfElements[n]) > 1e-9)
 		{
 			endFrontierType = UNCONNECTED;
 		}
