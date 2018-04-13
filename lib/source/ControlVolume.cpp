@@ -135,6 +135,7 @@ ControlVolume::ControlVolume(TransientPlainWallInfo data):
 	for (int i = 0; i < oldTemperatureField.size(); ++i)
 	{
 		this -> oldTemperatureField[i] = data.initialTemperature;
+		this -> temperatureField[i] = data.initialTemperature;
 	}
 
 	double diff = abs(oldTemperatureField[0] - this -> boundaries.getEndBoundaryCondition());
@@ -168,9 +169,8 @@ ControlVolume::ControlVolume(TransientPlainWallInfo data):
 
 		for (int i = 0; i < n; i++)
 		{
-			this -> oldTemperatureField[i] = this -> temperatureField[i];
-			this -> temperatureField[i] = this -> solver[i];
-			cout << temperatureField[i] << endl;
+			this -> oldTemperatureField = this -> temperatureField[i];
+			this -> temperatureField[i] = solver[i];
 		}
 		
 		diff = abs(temperatureField[0] - this -> boundaries.getEndBoundaryCondition());
