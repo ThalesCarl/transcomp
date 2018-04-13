@@ -140,7 +140,7 @@ ControlVolume::ControlVolume(TransientPlainWallInfo data):
 	double diff = abs(oldTemperatureField[0] - this -> boundaries.getEndBoundaryCondition());
 
 	int count = 0;
-	while ((diff>1e-3)&&(count < 8))
+	while ((diff>1e-3)&&(count < 2))
 	{
 		beginProcessorTransient(data);
 		for (int i = 1; i < n - 1; i++)
@@ -149,17 +149,16 @@ ControlVolume::ControlVolume(TransientPlainWallInfo data):
 			double cp = data.cp;
 			double area = data.transversalArea;
 			double deltaX = mesh.getDelta();
-			cout << deltaX << endl;
-			double deltaT = data.timeStep;
-			
+			double deltaT = data.timeStep;			
 			double aw = vectorK.getWestInterface(mesh,i, this -> interfaceOperation)/this -> mesh.westDistance(i);
-			double ae = this -> vectorK.getEastInterface(this -> mesh, 0, interfaceOperation)/mesh.eastDistance(0);
+			double ae = this -> vectorK.getEastInterface(this -> mesh, i, interfaceOperation)/mesh.eastDistance(i);
 			double ap0 = (ro*cp*area*deltaX)/deltaT;
-			cout << aw << ", " << ae << ", " << ap0 << endl;
+
 			solver.setValueToMatrix(i,i,ap0);
 			double tE0 = this -> oldTemperatureField[i+1];
 			double tW0 = this -> oldTemperatureField[i-1];
 			double tP0 = this -> oldTemperatureField[0];
+			double aux = ae*tE0 + aw*tW0 + tP0*(ap0 - ae - aw);
 			solver.setValueToVector(i,ae*tE0 + aw*tW0 + tP0*(ap0 - ae - aw));	
 		}
 		endProcessorTransient(data);
@@ -171,11 +170,12 @@ ControlVolume::ControlVolume(TransientPlainWallInfo data):
 		{
 			this -> oldTemperatureField[i] = this -> temperatureField[i];
 			this -> temperatureField[i] = this -> solver[i];
+			cout << temperatureField[i] << endl;
 		}
 		
 		diff = abs(temperatureField[0] - this -> boundaries.getEndBoundaryCondition());
 		++count;
-		cout << "count = " << count << ", oidfnasdf = " << this -> temperatureField[0] << endl;
+		
 	}
 	
 	
@@ -339,9 +339,6 @@ void ControlVolume::beginProcessorTransient(TransientPlainWallInfo data)
 		double tE0 = this -> oldTemperatureField[1];
 		double tP0 = this -> oldTemperatureField[0];
 
-		// double aux = ae*tE0+tP0*(ap0 - ae)-q;
-		// cout << aux << endl;
-
 		this -> solver.setValueToVector(0,ae*tE0+tP0*(ap0 - ae)-q);
 	}
 
@@ -356,21 +353,24 @@ void ControlVolume::endProcessorTransient(TransientPlainWallInfo data)
 
 	if((endFrontierType == CONNECTED)&&(endBoundaryConditionType == CONVECTION))
 	{
-		double q = this -> boundaries.getBeginBoundaryCondition();
 		double ro = data.density;
 		double cp = data.cp;
 		double area = data.transversalArea;
-		double deltaX = 0.5*mesh.getDeltaEnd();
+		double deltaX = 0.5*mesh.getDeltaBegin();
 		double deltaT = data.timeStep;
 		
 		double aw = area * this -> vectorK.getWestInterface(this -> mesh, n-1, interfaceOperation)/mesh.westDistance(n-1);
 		double ap0 = (ro*cp*area*deltaX)/deltaT;
+		
+		
+
 		solver.setValueToMatrix(n-1,n-1,ap0);
 		double tW0 = this -> oldTemperatureField[n-2];
 		double tP0 = this -> oldTemperatureField[n-1];
 		double h = boundaries.getEndConvectionCoeficient();
 		double tInf = boundaries.getEndBoundaryCondition();
-		solver.setValueToVector(n-1,aw*tW0 -tInf*h*area + tP0*(h*area + ap0 - aw));
+		double aux = aw*tW0 +tInf*h*area + tP0*(-h*area + ap0 - aw);
+		solver.setValueToVector(n-1,aux);
 	}
 }
 double ControlVolume::getTemperature(int ControlVolumeIndex)

@@ -367,7 +367,7 @@ double Mesh::getDeltaEnd()
 	int n = getNumberOfNodes();
 	if(n>2)
 	{
-		return centerPoint(n) - centerPoint(n-1);
+		return (centerPoint(n) - centerPoint(n-1));
 	}
 	else
 	{
