@@ -142,7 +142,11 @@ ControlVolume::ControlVolume(TransientPlainWallInfo data):
 
 	int count = 0;
 	double deltaT = data.timeStep;
-	while ((diff>1e-3)&&(count < 10))
+	ofstream pFile;
+	pFile.open("../results/third_task/controlVolume.csv");
+	pFile << "nodesPosition, " << "nodesTemperature" << endl;
+	pFile << fixed;
+	while ((diff>1)&&(count < 1000))
 	{
 		
 		beginProcessorTransient(data,deltaT);
@@ -172,12 +176,24 @@ ControlVolume::ControlVolume(TransientPlainWallInfo data):
 		{
 			this -> oldTemperatureField[i] = this -> temperatureField[i];
 			this -> temperatureField[i] = solver[i];
-			cout << temperatureField[i] << endl;
+		}		
+		if (count%75 == 0)
+		{
+			for (int i = 0; i < temperatureField.size(); ++i)
+			{
+				pFile << temperatureField[i] << ", ";
+			}
+			pFile << endl;
+
 		}
+		
 		diff = abs(temperatureField[0] - this -> boundaries.getEndBoundaryCondition());
+
 		++count;
+		
 	}
-	
+
+	pFile.close();
 	
 }
 

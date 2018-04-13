@@ -43,7 +43,7 @@ AnalyticalSolution::AnalyticalSolution(TransientPlainWallInfo data):
 	boundaries(data.beginBoundaryConditionType, data.endBoundaryConditionType, data.beginBoundaryConditionInfo, data.endBoundaryConditionInfo)
 {
 	
-	double Bi = 1.15;
+	double Bi = 2.05;
 	vector<double> csi;
 	vector<double> Cn;
 	double crit = 1e-13;
@@ -55,25 +55,40 @@ AnalyticalSolution::AnalyticalSolution(TransientPlainWallInfo data):
 	double To = 20;
 	double Tinf = 100;
 	double h = Bi*k/L;
-	double DELTAt=data.timeStep;
+	double DELTAt=0;
 	double alpha;
 	alpha = k/(ro*cp);
 	double wallLength = mesh.getWallLength();
-	double Fo = alpha*DELTAt/pow(wallLength,2);
+	
 	vector<double> Tinicial;
 	vector<double>thetas;
 	thetas.resize(mesh.getNumberOfNodes());
 	vector<double> Tanalit;
 	Tanalit.resize(mesh.getNumberOfNodes());
+
+	ofstream pFile;
+	pFile.open("../results/third_task/analytical_solution.csv");
 		
-	for(int i=0; i<mesh.getNumberOfNodes(); i++)
+	for(int i = 0; i < 925; i++)
 	{
-		Tinicial.push_back(To);
-		thetas[i] = getSolucaoAnalitica(Bi, Fo, mesh.centerPoint(i)/wallLength, crit);
-		Tanalit[i] = thetas[i]*(To-Tinf)+Tinf;
-		cout<<endl<<"theta["<<i<<"]="<<thetas[i]<<"	Tanalit["<<i<<"]="<<Tanalit[i]<<endl;
+		DELTAt += data.timeStep;
+		
+		double Fo = alpha*DELTAt/pow(wallLength,2);
+		if (i%75 == 0)
+		{
+			for(int j=0; j<mesh.getNumberOfNodes(); j++)
+			{
+				Tinicial.push_back(To);
+				thetas[j] = getSolucaoAnalitica(Bi, Fo, mesh.centerPoint(j)/wallLength, crit);
+				
+				Tanalit[j] = thetas[j]*(To-Tinf)+Tinf;
+				pFile << Tanalit[j] << ", ";
+			}
+			pFile << endl;
+		}
+		
 	}
-	
+	pFile.close();
 }
 
 AnalyticalSolution::AnalyticalSolution(PlainWallNonLinearInfo data):
