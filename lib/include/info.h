@@ -53,6 +53,7 @@ struct TransientPlainWallInfo
 	int numberOfTimeSteps;
 	double timeStep;
 	double initialTemperature;
+	double tolerance;
 	BoundaryCondition beginBoundaryConditionType;
 	BoundaryCondition endBoundaryConditionType;
 	std::vector<double> beginBoundaryConditionInfo;
@@ -73,7 +74,6 @@ struct PlainWallNonLinearInfo
 	std::vector<double> beginBoundaryConditionInfo;
 	std::vector<double> endBoundaryConditionInfo;
 	InterfaceOperation interfaceOperation;
-	bool plotarCurvas;
 };
 
 #endif

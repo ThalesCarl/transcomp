@@ -39,8 +39,10 @@ private:
 	vector<double> oldTemperatureField;	
 	vector<vector<double>> transientTemperatureField;
 	int iterationCounter;
+	double timeStep;
 
 	// ConvergenceCriteria selectConvergenceCriteria(ConvergenceCriteriaType);
+	void getTimeStep(TransientPlainWallInfo data);
 	void beginProcessor();
 	void endProcessor();
 	void beginProcessorTransient(TransientPlainWallInfo data, double deltaTfromTheBeginning);

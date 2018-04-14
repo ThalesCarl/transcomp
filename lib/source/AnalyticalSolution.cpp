@@ -67,7 +67,7 @@ AnalyticalSolution::AnalyticalSolution(TransientPlainWallInfo data):
 	Tanalit.resize(mesh.getNumberOfNodes());
 
 	ofstream pFile;
-	pFile.open("../results/third_task/analytical_solution.csv");
+	pFile.open("../results/third_task/analytical_solution" + to_string(mesh.getNumberOfNodes()) + ".csv");
 
 	for (int i = 0; i < mesh.getNumberOfNodes(); ++i)
 	{
@@ -81,7 +81,7 @@ AnalyticalSolution::AnalyticalSolution(TransientPlainWallInfo data):
 	for(int i = 0; i < 872; i++)
 	{
 		DELTAt += data.timeStep;
-		pFile << DELTAt << ", " << endl;
+		pFile << DELTAt << ", ";
 		
 		double Fo = alpha*DELTAt/pow(wallLength,2);
 		if (i%100 == 0)

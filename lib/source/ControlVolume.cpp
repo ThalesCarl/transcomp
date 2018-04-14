@@ -141,9 +141,12 @@ ControlVolume::ControlVolume(TransientPlainWallInfo data):
 	double diff = abs(oldTemperatureField[0] - this -> boundaries.getEndBoundaryCondition());
 
 	int count = 0;
-	double deltaT = data.timeStep;
+
+	getTimeStep(data);
+	double deltaT = this -> timeStep;
+	cout << deltaT << endl;
 	ofstream pFile;
-	pFile.open("../results/third_task/controlVolume.csv");
+	pFile.open("../results/third_task/controlVolume" << to_string(mesh.getNumberOfNodes()) << "VC.csv");
 	
 	pFile << fixed;
 	for (int i = 0; i < mesh.getNumberOfNodes(); ++i)
@@ -155,7 +158,11 @@ ControlVolume::ControlVolume(TransientPlainWallInfo data):
 			pFile << endl;
 	}
 	double timePosition = 0;
-	while ((diff>5)&&(count < 10000))
+	int countMax = 3000;
+	double maximumError = 1000;
+	double tol = data.tolerance;
+	double deltaTemperature = abs(data.initialTemperature - this -> boundaries.getEndBoundaryCondition());
+	while ((maximumError > tol)&&(count < countMax))
 	{
 		timePosition += deltaT;
 		pFile << timePosition << ", ";
@@ -190,7 +197,6 @@ ControlVolume::ControlVolume(TransientPlainWallInfo data):
 			this -> temperatureField[i] = solver[i];
 			// cout << this -> temperatureField[i] << endl;
 		}
-		cout << "opa" << count << endl;
 		if (count%100 == 0)
 		{
 			for (int i = 0; i < temperatureField.size(); ++i)
@@ -203,13 +209,21 @@ ControlVolume::ControlVolume(TransientPlainWallInfo data):
 			}
 		}
 
+		vector<double> errorsVec;
+		for (int i = 0; i < n; ++i)
+		{
+			errorsVec.push_back((abs(temperatureField[i]-oldTemperatureField[i]))/deltaTemperature);
+		}
+		maximumError = *max_element(errorsVec.begin(),errorsVec.end());
 		
-		
-		diff = abs(temperatureField[0] - this -> boundaries.getEndBoundaryCondition());
 
 		++count;
 		
 	}
+	if (count < 3000)
+		cout << "Convergiu após " << count << "iterações" << endl;
+	else
+		cout << "Não convergiu nem com " << count << "iterações" << endl;
 
 	pFile.close();
 	
@@ -420,4 +434,10 @@ int ControlVolume::getIterationCounter()
 	return this -> iterationCounter;
 }
 
+void ControlVolume::getTimeStep(TransientPlainWallInfo data)
+{
+	double numerator = 0.5 * data.density * data.cp * this -> mesh.getDelta();
+	double denominator = (2*vectorK[0])/(this -> mesh.getDelta()) + this -> boundaries.getEndConvectionCoeficient() * data.transversalArea;
+	this -> timeStep = numerator/denominator - 1.0;
+}
 
