@@ -51,7 +51,6 @@ struct TransientPlainWallInfo
 	double biotNumber;
 	double transversalArea;
 	int numberOfTimeSteps;
-	double timeStep;
 	double initialTemperature;
 	double tolerance;
 	BoundaryCondition beginBoundaryConditionType;

@@ -138,7 +138,7 @@ ControlVolume::ControlVolume(TransientPlainWallInfo data):
 		this -> temperatureField[i] = data.initialTemperature;
 	}
 
-	double diff = abs(oldTemperatureField[0] - this -> boundaries.getEndBoundaryCondition());
+	double difference = abs(temperatureField[0] - this -> boundaries.getEndBoundaryCondition());
 
 	int count = 0;
 
@@ -146,7 +146,7 @@ ControlVolume::ControlVolume(TransientPlainWallInfo data):
 	double deltaT = this -> timeStep;
 	cout << deltaT << endl;
 	ofstream pFile;
-	pFile.open("../results/third_task/controlVolume" << to_string(mesh.getNumberOfNodes()) << "VC.csv");
+	pFile.open("../results/third_task/controlVolume" + to_string(mesh.getNumberOfNodes()) + "VC.csv");
 	
 	pFile << fixed;
 	for (int i = 0; i < mesh.getNumberOfNodes(); ++i)
@@ -158,14 +158,13 @@ ControlVolume::ControlVolume(TransientPlainWallInfo data):
 			pFile << endl;
 	}
 	double timePosition = 0;
-	int countMax = 3000;
-	double maximumError = 1000;
+	int countMax = 5000;
 	double tol = data.tolerance;
-	double deltaTemperature = abs(data.initialTemperature - this -> boundaries.getEndBoundaryCondition());
-	while ((maximumError > tol)&&(count < countMax))
+	// double deltaTemperature = abs(data.initialTemperature - this -> boundaries.getEndBoundaryCondition());
+	// vector<double> errorsVec;
+	while ((difference > tol)&&(count < countMax))
 	{
 		timePosition += deltaT;
-		pFile << timePosition << ", ";
 		beginProcessorTransient(data,deltaT);
 		for (int i = 1; i < n - 1; i++)
 		{
@@ -197,33 +196,38 @@ ControlVolume::ControlVolume(TransientPlainWallInfo data):
 			this -> temperatureField[i] = solver[i];
 			// cout << this -> temperatureField[i] << endl;
 		}
-		if (count%100 == 0)
+		if (count%500 == 0)
 		{
+			pFile << timePosition << ", ";
 			for (int i = 0; i < temperatureField.size(); ++i)
 			{
+				
 				pFile << temperatureField[i];
 				if(i!=temperatureField.size()-1)
 					pFile << ", ";
 				else		
-					pFile << endl;	
+					pFile << " ";	
 			}
+			pFile << endl;
 		}
 
-		vector<double> errorsVec;
-		for (int i = 0; i < n; ++i)
-		{
-			errorsVec.push_back((abs(temperatureField[i]-oldTemperatureField[i]))/deltaTemperature);
-		}
-		maximumError = *max_element(errorsVec.begin(),errorsVec.end());
-		
+		// errorsVec.clear();
+		// for (int i = 0; i < n; ++i)
+		// {
+		// 	errorsVec.push_back((abs(temperatureField[i]-oldTemperatureField[i]))/deltaTemperature);
+		// 	cout << count << ", " << errorsVec[i] << endl;
+		// }
+		// maximumError = *max_element(errorsVec.begin(),errorsVec.end());
+		difference = abs(temperatureField[0] - this -> boundaries.getEndBoundaryCondition());
 
 		++count;
+
 		
 	}
 	if (count < 3000)
-		cout << "Convergiu após " << count << "iterações" << endl;
+		cout << "Convergiu após " << count << " iterações" << endl;
 	else
-		cout << "Não convergiu nem com " << count << "iterações" << endl;
+		cout << "Não convergiu nem com " << count << " iterações" << endl;
 
 	pFile.close();
 	
@@ -438,6 +442,6 @@ void ControlVolume::getTimeStep(TransientPlainWallInfo data)
 {
 	double numerator = 0.5 * data.density * data.cp * this -> mesh.getDelta();
 	double denominator = (2*vectorK[0])/(this -> mesh.getDelta()) + this -> boundaries.getEndConvectionCoeficient() * data.transversalArea;
-	this -> timeStep = numerator/denominator - 1.0;
+	this -> timeStep = numerator/denominator - 10.0;
 }
 

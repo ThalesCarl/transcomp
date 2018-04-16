@@ -55,10 +55,13 @@ AnalyticalSolution::AnalyticalSolution(TransientPlainWallInfo data):
 	double To = 20;
 	double Tinf = 100;
 	double h = Bi*k/L;
-	double DELTAt=0;
+	double timePosition=0;
 	double alpha;
 	alpha = k/(ro*cp);
 	double wallLength = mesh.getWallLength();
+	getTimeStep(data);
+	cout << this -> timeStep << endl;
+
 	
 	vector<double> Tinicial;
 	vector<double>thetas;
@@ -78,14 +81,15 @@ AnalyticalSolution::AnalyticalSolution(TransientPlainWallInfo data):
 			pFile << endl;
 	}
 		
-	for(int i = 0; i < 872; i++)
+	for(int i = 0; i < 250; i++)
 	{
-		DELTAt += data.timeStep;
-		pFile << DELTAt << ", ";
+		timePosition += this -> timeStep;
 		
-		double Fo = alpha*DELTAt/pow(wallLength,2);
-		if (i%100 == 0)
+		
+		double Fo = alpha*timePosition/pow(wallLength,2);
+		if (i%50 == 0)
 		{
+			pFile << timePosition << ", ";
 			for(int j=0; j<mesh.getNumberOfNodes(); j++)
 			{
 				Tinicial.push_back(To);
@@ -96,8 +100,9 @@ AnalyticalSolution::AnalyticalSolution(TransientPlainWallInfo data):
 				if(j!=mesh.getNumberOfNodes()-1)
 					pFile << ", ";
 				else		
-					pFile << endl;
+					pFile << " ";
 			}
+			pFile << endl;
 		}
 		
 	}
@@ -290,3 +295,11 @@ double AnalyticalSolution::getSolucaoAnalitica(double Bi, double Fo, double xc, 
 	}
 	return (theta);
 }
+
+void AnalyticalSolution::getTimeStep(TransientPlainWallInfo data)
+{
+	double numerator = 0.5 * data.density * data.cp * this -> mesh.getDelta();
+	double denominator = (2*vectorK[0])/(this -> mesh.getDelta()) + this -> boundaries.getEndConvectionCoeficient() * data.transversalArea;
+	this -> timeStep = numerator/denominator - 10.0;
+}
+

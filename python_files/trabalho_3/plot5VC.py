@@ -26,7 +26,7 @@ plt.xlabel('x[m]')
 plt.ylabel('T(x)[ºC]')
 plt.grid(b=1)
 plt.axis([0,0.65,-1,100])
-legend = plt.legend(loc='lower right')
+legend = plt.legend(loc='center right')
 legend.get_frame().set_facecolor('#D3D3D3')
 
 plt.savefig('../../results/third_task/temperature_field_5VC.png')

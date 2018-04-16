@@ -34,6 +34,7 @@ private:
 	Boundary boundaries;
 	ThermalConduction vectorK;
 	double biotNumber;
+	double timeStep;
 
 	double evalFirstProblemTemperatureLaw(double position);
 	double evalSecondProblemTemperatureLaw(double position, DoublePlainWallInfo data);
@@ -52,6 +53,7 @@ private:
 	// extern PetscErrorCode function(SNES snes, Vec x, Vec f, void *ctx);
 	// extern PetscErrorCode dfunction(SNES snes, Vec x, Mat A, Mat B, void* ctx);
 	double solve(double initialGuess);
+	void getTimeStep(TransientPlainWallInfo data);
 	
 			
 };

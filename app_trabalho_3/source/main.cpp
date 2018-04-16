@@ -24,7 +24,7 @@ int main()
 		info.density = 2000;
 		info.cp = 700;
 		info.biotNumber = 2.05;
-		info.timeStep = 4200;
+		info.tolerance = 1;
 		info.initialTemperature = 20;
 		info.transversalArea = 1;
 		info.beginBoundaryConditionType = PRESCRIBED_FLUX;
